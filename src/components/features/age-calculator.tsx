@@ -1,11 +1,14 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
+import type { Locale } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarIcon, Gift } from 'lucide-react';
 import { format, differenceInYears, differenceInMonths, differenceInDays, subYears, subMonths } from 'date-fns';
+import { enUS, faIR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
 import { jalaliToGregorian, gregorianToJalali } from '@/lib/date-converter';
@@ -146,7 +149,7 @@ export default function AgeCalculator() {
           <PopoverTrigger asChild>
             <Button variant={'outline'} className={cn('w-full justify-start text-left font-normal h-12 text-base', !gregorianDate && 'text-muted-foreground')}>
               <CalendarIcon className="ml-2 h-5 w-5" />
-              {gregorianDate ? format(gregorianDate, 'PPP') : <span>تاریخ تولد خود را انتخاب کنید</span>}
+              {gregorianDate ? format(gregorianDate, 'PPP', { locale: enUS }) : <span>تاریخ تولد خود را انتخاب کنید</span>}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0 glass-effect" align="start">
@@ -154,6 +157,7 @@ export default function AgeCalculator() {
               mode="single"
               selected={gregorianDate}
               onSelect={handleGregorianSelect}
+              locale={enUS}
               captionLayout="dropdown-buttons"
               fromYear={1900}
               toYear={new Date().getFullYear()}

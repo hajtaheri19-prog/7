@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useEffect, useState } from 'react';
 import { Clock } from 'lucide-react';
+import { useIsMobile } from "@/hooks/use-mobile";
 
 
 const LiveClock = () => {

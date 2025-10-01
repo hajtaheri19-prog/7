@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,7 +36,7 @@ export default function PasswordGenerator() {
   });
   const { toast } = useToast();
 
-  const generatePassword = () => {
+  const generatePassword = useCallback(() => {
     let charset = '';
     
     let localCharsets = { ...charSets };
@@ -71,9 +72,9 @@ export default function PasswordGenerator() {
       newPassword += charset[randomValues[i] % charset.length];
     }
     setPassword(newPassword);
-  };
+  }, [length, options, toast]);
   
-  const calculateStrength = () => {
+  const calculateStrength = useCallback(() => {
     let score = 0;
     if (options.lowercase) score += 1;
     if (options.uppercase) score += 1;
@@ -105,17 +106,17 @@ export default function PasswordGenerator() {
     }
     
     setStrength({ value: totalScore, label: strengthLabel, color: strengthColor });
-  };
+  }, [length, options]);
 
 
   useEffect(() => {
-    // We don't generate a password on initial load to avoid hydration issues with crypto
-  }, [length, options]);
+    // Generate a password on initial client-side render
+    generatePassword();
+  }, [generatePassword]);
 
   useEffect(() => {
     calculateStrength();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [password, length, options]);
+  }, [password, calculateStrength]);
 
   const copyToClipboard = () => {
     if (!password) return;

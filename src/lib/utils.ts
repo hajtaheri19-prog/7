@@ -1,3 +1,4 @@
+
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -61,4 +62,59 @@ export function numToWords(numStr: string): string {
     });
 
     return wordGroups.reverse().filter(g => g).join(' و ');
+}
+
+
+export function numToWordsEn(numStr: string): string {
+    const num = parseInt(numStr.replace(/,/g, ''), 10);
+    if (isNaN(num)) return '';
+    if (num === 0) return 'Zero';
+    if (num > 999999999999999) return 'Number is too large';
+
+    const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+    const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+    const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+    const thousands = ['', 'Thousand', 'Million', 'Billion', 'Trillion'];
+
+    function convertGroup(n: number): string {
+        if (n === 0) return '';
+        const parts = [];
+
+        const h = Math.floor(n / 100);
+        if (h > 0) parts.push(`${ones[h]} Hundred`);
+        
+        const rem = n % 100;
+        if (rem > 0) {
+            if (rem < 10) {
+                parts.push(ones[rem]);
+            } else if (rem < 20) {
+                parts.push(teens[rem - 10]);
+            } else {
+                const t = Math.floor(rem / 10);
+                const o = rem % 10;
+                parts.push(tens[t]);
+                if (o > 0) parts.push(ones[o]);
+            }
+        }
+        return parts.join(' ');
+    }
+
+    if (num < 1000) {
+        return convertGroup(num);
+    }
+
+    const numGroups = [];
+    let tempNum = num;
+    while (tempNum > 0) {
+        numGroups.push(tempNum % 1000);
+        tempNum = Math.floor(tempNum / 1000);
+    }
+
+    const wordGroups = numGroups.map((group, i) => {
+        if (group === 0) return '';
+        const groupWords = convertGroup(group);
+        return i > 0 ? `${groupWords} ${thousands[i]}` : groupWords;
+    });
+
+    return wordGroups.reverse().filter(g => g).join(', ');
 }

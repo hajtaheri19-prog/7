@@ -17,10 +17,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        body: ['Vazirmatn', 'sans-serif'],
-        headline: ['Vazirmatn', 'sans-serif'],
-        code: ['monospace'],
         display: ['Vazirmatn', 'sans-serif'],
+        body: ['Vazirmatn', 'sans-serif'],
       },
       colors: {
         background: 'hsl(var(--background))',
@@ -63,22 +61,14 @@ export default {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
-        sidebar: {
-          DEFAULT: 'hsl(var(--sidebar-background))',
-          foreground: 'hsl(var(--sidebar-foreground))',
-          primary: 'hsl(var(--sidebar-primary))',
-          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-          accent: 'hsl(var(--sidebar-accent))',
-          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-          border: 'hsl(var(--sidebar-border))',
-          ring: 'hsl(var(--sidebar-ring))',
-        },
       },
       borderRadius: {
-        xl: 'calc(var(--radius) + 4px)',
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 4px)',
-        sm: 'calc(var(--radius) - 8px)',
+        '3xl': 'calc(var(--radius) + 16px)',
+        '2xl': 'calc(var(--radius) + 8px)',
+        xl: 'var(--radius)',
+        lg: 'calc(var(--radius) - 4px)',
+        md: 'calc(var(--radius) - 8px)',
+        sm: 'calc(var(--radius) - 12px)',
       },
       keyframes: {
         'accordion-down': {
@@ -97,24 +87,11 @@ export default {
             height: '0',
           },
         },
-        'text-gradient': {
-          'to': {
-            'background-position': '200% center',
-          }
-        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'text-gradient': 'text-gradient 3s linear infinite',
       },
-      backgroundSize: {
-        '300%': '300%',
-      },
-      backgroundPosition: {
-        'pos-0%': '0% 50%',
-        'pos-100%': '100% 50%',
-      }
     },
   },
   plugins: [require('tailwindcss-animate')],

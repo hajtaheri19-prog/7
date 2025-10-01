@@ -1,21 +1,15 @@
+
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Timer, Play, Pause, History, Redo } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export default function Stopwatch() {
-  const [time, setTime] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const [laps, setLaps] = useState<number[]>([]);
-  const timerRef = useRef<number | null>(null);
-  const lastLapTimeRef = useRef(0);
-
-  const formatTime = (timeInMs: number) => {
-    const milliseconds = Math.floor(timeInMs % 1000 / 10);
+const formatTime = (timeInMs: number) => {
+    const milliseconds = Math.floor((timeInMs % 1000) / 10);
     const totalSeconds = Math.floor(timeInMs / 1000);
     const seconds = totalSeconds % 60;
     const minutes = Math.floor(totalSeconds / 60) % 60;
@@ -25,9 +19,22 @@ export default function Stopwatch() {
         seconds: seconds.toLocaleString('fa-IR', {minimumIntegerDigits: 2}), 
         milliseconds: milliseconds.toLocaleString('fa-IR', {minimumIntegerDigits: 2})
     };
-  };
+};
 
-  const handleStartPause = () => setIsRunning(!isRunning);
+export default function Stopwatch() {
+  const [time, setTime] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [laps, setLaps] = useState<number[]>([]);
+  const timerRef = useRef<number | null>(null);
+  const startTimeRef = useRef(0);
+  const lastLapTimeRef = useRef(0);
+
+  const handleStartPause = () => {
+      if (!isRunning) {
+          startTimeRef.current = Date.now() - time;
+      }
+      setIsRunning(!isRunning);
+  };
 
   const handleReset = () => {
     setIsRunning(false);
@@ -46,29 +53,30 @@ export default function Stopwatch() {
 
   useEffect(() => {
     if (isRunning) {
-      const startTime = Date.now() - time;
-      timerRef.current = window.setInterval(() => {
-        setTime(Date.now() - startTime);
-      }, 10);
+      const animate = () => {
+        setTime(Date.now() - startTimeRef.current);
+        timerRef.current = requestAnimationFrame(animate);
+      };
+      timerRef.current = requestAnimationFrame(animate);
     } else {
       if (timerRef.current) {
-        clearInterval(timerRef.current);
+        cancelAnimationFrame(timerRef.current);
       }
     }
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) cancelAnimationFrame(timerRef.current);
     };
-  }, [isRunning, time]);
+  }, [isRunning]);
   
-  const { minutes, seconds, milliseconds } = formatTime(time);
+  const formattedTime = useMemo(() => formatTime(time), [time]);
 
   return (
     <CardContent className="flex flex-col gap-6 items-center">
       <div className="text-center bg-muted/50 p-6 rounded-full shadow-inner font-display aspect-square w-64 h-64 flex flex-col justify-center items-center" dir="ltr">
           <p className="text-6xl font-bold text-primary tracking-wider text-glow-strong">
-            {minutes}:{seconds}
+            {formattedTime.minutes}:{formattedTime.seconds}
           </p>
-          <p className="text-3xl text-primary/70 tracking-widest text-glow-strong">.{milliseconds}</p>
+          <p className="text-3xl text-primary/70 tracking-widest text-glow-strong">.{formattedTime.milliseconds}</p>
       </div>
 
       <div className="flex justify-center items-center gap-4 w-full max-w-sm">

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo } from 'react';
@@ -5,19 +6,25 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { SpellCheck, Clipboard } from 'lucide-react';
 import { Label } from '../ui/label';
-import { numToWords } from '@/lib/utils';
+import { numToWords, numToWordsEn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import { useToast } from '@/hooks/use-toast';
 
+type Language = 'fa' | 'en';
 
 export default function NumberToWordsConverter() {
   const [number, setNumber] = useState('');
+  const [language, setLanguage] = useState<Language>('fa');
   const { toast } = useToast();
 
   const words = useMemo(() => {
     if (number.trim() === '') return 'لطفا یک عدد وارد کنید.';
-    return numToWords(number);
-  }, [number]);
+    if (language === 'fa') {
+        return numToWords(number);
+    } else {
+        return numToWordsEn(number);
+    }
+  }, [number, language]);
 
   const copyToClipboard = () => {
     if (!words || words === 'لطفا یک عدد وارد کنید.') return;
@@ -30,6 +37,18 @@ export default function NumberToWordsConverter() {
 
   return (
     <CardContent className="flex flex-col gap-4">
+       <div className="flex items-center justify-center p-1 bg-muted rounded-lg w-full max-w-sm mx-auto">
+            {(['fa', 'en'] as Language[]).map((lang) => (
+            <Button 
+                key={lang}
+                onClick={() => setLanguage(lang)} 
+                variant={language === lang ? 'default' : 'ghost'}
+                className={`w-full ${language === lang ? '' : 'text-muted-foreground'}`}
+            >
+                {lang === 'fa' ? 'فارسی' : 'انگلیسی'}
+            </Button>
+            ))}
+        </div>
       <div className="space-y-2">
         <Label htmlFor="number-to-words-input" className="text-muted-foreground">عدد را وارد کنید</Label>
         <Input 

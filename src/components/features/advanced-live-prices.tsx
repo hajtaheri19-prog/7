@@ -118,21 +118,19 @@ export default function AdvancedLivePrices({ initialData }: AdvancedLivePricesPr
     setCooldownTime(COOLDOWN_SECONDS);
 
     try {
-      // Since flows are disabled, we cannot fetch prices.
-      // This is a placeholder for when the functionality is restored.
-      console.error("Price fetching is temporarily disabled. Using mock data.");
-       // Using mock data
-      const mockData = {
-        GoldOunce: { price: "2320", change: "+0.2%" },
-        MesghalGold: { price: "146500000", change: "-0.5%" },
-        Gold18K: { price: "33850000", change: "-0.5%" },
-        EmamiCoin: { price: "408000000", change: "+1.2%" },
-        Dollar: { price: "595000", change: "0" },
-        USDT: { price: "596500", change: "+0.1%" },
-      };
-      setData(mockData);
+      const res = await fetch('/api/live-prices', { cache: 'no-store' });
+      const json = await res.json();
+      const api = json?.data || {};
+      const nextData = {
+        GoldOunce: api.GoldOunce ? { price: api.GoldOunce.price, change: api.GoldOunce.change } : undefined,
+        MesghalGold: api.MesghalGold ? { price: api.MesghalGold.price, change: api.MesghalGold.change } : undefined,
+        Gold18K: api.Gold18K ? { price: api.Gold18K.price, change: api.Gold18K.change } : undefined,
+        EmamiCoin: api.EmamiCoin ? { price: api.EmamiCoin.price, change: api.EmamiCoin.change } : undefined,
+        Dollar: api.Dollar ? { price: api.Dollar.price, change: api.Dollar.change } : undefined,
+        USDT: api.USDT ? { price: api.USDT.price, change: api.USDT.change } : undefined,
+      } as any;
+      setData(nextData);
       setLastUpdated(new Date());
-
     } catch (error) {
       console.error("Failed to fetch prices:", error);
     } finally {

@@ -18,13 +18,26 @@ export default function QuotesRotator({ effect = 'fade', mode = 'random' }: { ef
     fetch('/data/quotes.json')
       .then(r => r.json())
       .then((data: QuoteItem[]) => {
-        setAll(Array.isArray(data) ? data : []);
+        const items = Array.isArray(data) ? data : [];
+        setAll(items);
         if (mode === 'daily') {
           const seed = new Date().toISOString().slice(0, 10);
           let hash = 0; for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
-          setIndex(hash % (data.length || 1));
+          setIndex(hash % (items.length || 1));
         } else {
-          setIndex(Math.floor(Math.random() * (data.length || 1)));
+          // non-repeat logic via localStorage
+          try {
+            const key = 'quotes_seen_ids';
+            const seen: number[] = JSON.parse(localStorage.getItem(key) || '[]');
+            const available = items.filter(q => !seen.includes(q.id));
+            const pool = available.length ? available : items;
+            const pick = pool[Math.floor(Math.random() * (pool.length || 1))];
+            setIndex(items.findIndex(q => q.id === pick.id));
+            const nextSeen = available.length ? [...seen, pick.id] : [pick.id];
+            localStorage.setItem(key, JSON.stringify(nextSeen.slice(-1000)));
+          } catch {
+            setIndex(Math.floor(Math.random() * (items.length || 1)));
+          }
         }
       })
       .catch(() => setAll([]));
@@ -44,7 +57,7 @@ export default function QuotesRotator({ effect = 'fade', mode = 'random' }: { ef
   if (!mounted || !current) return null;
 
   return (
-    <Card className="glass-effect rounded-3xl p-5 bg-gradient-to-br from-black/40 via-zinc-900/40 to-black/30 border-0 overflow-hidden">
+    <Card className="glass-effect rounded-3xl p-5 bg-gradient-to-br from-black/40 via-zinc-900/40 to-black/30 border-0 overflow-hidden shadow-[0_0_25px_#eab30822]">
       <div className={
         effect === 'parallax'
           ? "flex items-start gap-4 will-change-transform [transform:perspective(800px)]"
@@ -52,7 +65,7 @@ export default function QuotesRotator({ effect = 'fade', mode = 'random' }: { ef
           ? "flex items-start gap-4 will-change-transform transition-transform duration-700 [transform:perspective(800px)_rotateY(0deg)]"
           : "flex items-start gap-4"
       }>
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-500/40 to-yellow-300/20 shadow-[0_0_18px_#eab30855] flex items-center justify-center">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-500/40 to-yellow-300/20 shadow-[0_0_18px_#eab30855] flex items-center justify-center animate-pulse">
           <Quote className="w-6 h-6 text-yellow-300" />
         </div>
         <div className={
@@ -63,7 +76,7 @@ export default function QuotesRotator({ effect = 'fade', mode = 'random' }: { ef
           <div className="text-sm text-yellow-200/80">سخن بزرگان</div>
           <div className={
             effect === 'parallax'
-              ? "mt-1 text-lg leading-7 text-foreground animate-in fade-in [transform:translateY(6px)]"
+              ? "mt-1 text-lg leading-7 text-foreground animate-in fade-in [transform:translateY(6px)] shadow-[0_0_18px_#eab30822]"
               : effect === 'flip3d'
               ? "mt-1 text-lg leading-7 text-foreground animate-in fade-in"
               : "mt-1 text-lg leading-7 text-foreground animate-in fade-in slide-in-from-bottom-1"

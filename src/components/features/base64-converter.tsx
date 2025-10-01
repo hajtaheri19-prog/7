@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowRightLeft, Copy, Download, Eye, File as FileIcon, RefreshCcw, Upload, X } from 'lucide-react';
+import { ArrowRightLeft, Copy, Download, Eye, File as FileIcon, RefreshCcw, Upload, X, Hash } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 
@@ -145,7 +145,17 @@ export default function Base64Converter() {
   };
 
   return (
-      <Tabs defaultValue="text" className="w-full pt-6">
+      <div className="w-full pt-6">
+        <div className="glass-effect rounded-2xl p-5 mb-4 bg-gradient-to-br from-black/40 via-zinc-900/40 to-black/30 border-0 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-500/40 to-yellow-300/20 shadow-[0_0_18px_#eab30855] flex items-center justify-center">
+            <Hash className="w-5 h-5 text-yellow-300" />
+          </div>
+          <div>
+            <div className="text-lg font-display font-semibold text-foreground">مبدل متن/فایل ↔ Base64</div>
+            <div className="text-xs text-yellow-200/80">رمزگذاری و رمزگشایی با حس VIP شیشه‌ای ✨</div>
+          </div>
+        </div>
+      <Tabs defaultValue="text" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="text">متن ↔ Base64</TabsTrigger>
           <TabsTrigger value="file">فایل ↔ Base64</TabsTrigger>
@@ -314,5 +324,6 @@ export default function Base64Converter() {
              </Card>
         </TabsContent>
       </Tabs>
+      </div>
   );
 }

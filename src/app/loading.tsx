@@ -1,52 +1,99 @@
-"use client"
-
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Loader, Sparkles } from 'lucide-react';
+import { Loader2, Sparkles, Zap, Star } from 'lucide-react';
 
 export default function Loading() {
   const logo = PlaceHolderImages.find(p => p.id === 'logo');
 
   return (
-    <div className="relative gradient-bg flex items-center justify-center min-h-screen overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 animate-pulse opacity-20">
-        <svg width="100%" height="100%">
-          <defs>
-            <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
-              <stop offset="0%" stopColor="hsl(var(--primary))" />
-              <stop offset="100%" stopColor="hsl(var(--accent))" />
-            </linearGradient>
-          </defs>
-          <circle cx="15%" cy="20%" r="120" fill="url(#g)" />
-          <circle cx="85%" cy="30%" r="160" fill="url(#g)" />
-          <circle cx="50%" cy="80%" r="180" fill="url(#g)" />
-        </svg>
+    <div className="gradient-bg flex items-center justify-center min-h-screen relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/20 rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute top-3/4 right-1/4 w-24 h-24 bg-accent/20 rounded-full blur-xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 w-16 h-16 bg-secondary/20 rounded-full blur-xl animate-pulse delay-500"></div>
       </div>
-      <div className="text-center p-8 glass-effect rounded-3xl shadow-2xl flex flex-col items-center gap-5 backdrop-blur-md">
-        {logo && (
-          <Image
-            src={logo.imageUrl}
-            width={80}
-            height={80}
-            alt="لوگوی تبدیلا"
-            className="animate-float"
-            data-ai-hint={logo.imageHint}
+
+      {/* Floating particles */}
+      <div className="absolute inset-0">
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-primary/30 rounded-full animate-float"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${3 + Math.random() * 2}s`
+            }}
           />
+        ))}
+      </div>
+
+      <div className="text-center p-8 glass-effect rounded-3xl shadow-2xl flex flex-col items-center gap-6 relative z-10 backdrop-blur-xl border border-white/10">
+        {/* Logo with enhanced animation */}
+        {logo && (
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/50 to-accent/50 rounded-full blur-lg animate-pulse"></div>
+            <Image
+              src={logo.imageUrl}
+              width={100}
+              height={100}
+              alt="لوگوی تبدیلا"
+              className="animate-float relative z-10 drop-shadow-2xl"
+              data-ai-hint={logo.imageHint}
+            />
+            <div className="absolute -top-2 -right-2">
+              <Sparkles className="w-6 h-6 text-yellow-400 animate-spin" />
+            </div>
+          </div>
         )}
-        <div className="w-64 h-2 rounded-full bg-background/40 overflow-hidden">
-          <div className="h-full w-1/3 bg-primary animate-[progress_1.6s_ease-in-out_infinite] rounded-full" />
+
+        {/* Main loading text with enhanced styling */}
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex items-center gap-3 text-3xl font-bold text-primary text-glow">
+            <Loader2 className="animate-spin w-8 h-8" />
+            <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              تبدیلا
+            </span>
+          </div>
+          
+          {/* Animated loading dots */}
+          <div className="flex items-center gap-2 text-lg text-muted-foreground">
+            <span>در حال بارگذاری</span>
+            <div className="flex gap-1">
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-100"></div>
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-200"></div>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Sparkles className="w-4 h-4 text-primary" />
-          <span>در حال آماده‌سازی تجربه شما...</span>
+
+        {/* Progress bar */}
+        <div className="w-64 h-2 bg-muted/30 rounded-full overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-primary to-accent rounded-full animate-pulse"></div>
         </div>
-        <style jsx>{`
-          @keyframes progress {
-            0% { transform: translateX(-100%); }
-            50% { transform: translateX(30%); }
-            100% { transform: translateX(120%); }
-          }
-        `}</style>
+
+        {/* Feature highlights */}
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <Zap className="w-4 h-4 text-yellow-500" />
+            <span>سریع</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Star className="w-4 h-4 text-blue-500" />
+            <span>دقیق</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Sparkles className="w-4 h-4 text-purple-500" />
+            <span>زیبا</span>
+          </div>
+        </div>
+
+        {/* Version info without developer name */}
+        <div className="text-xs text-muted-foreground/70 mt-2">
+          <p>نسخه 1.0.0</p>
+        </div>
       </div>
     </div>
   );

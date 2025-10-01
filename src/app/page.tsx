@@ -12,12 +12,18 @@ import ImageNext from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import PWAInstallPrompt from '@/components/layout/pwa-install-prompt';
-import QuotesRotator from '@/components/layout/quotes-rotator';
-import ModeSelector from '@/components/layout/mode-selector';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import QuotesRotator from '@/components/layout/quotes-rotator';
 import Link from 'next/link';
 import { ModeBadge } from '@/components/shared/mode-badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+const slugify = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\u0600-\u06FF-]+/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
 
 const LoadingComponent = () => (
     <div className="flex items-center justify-center p-8 text-muted-foreground">
@@ -167,7 +173,7 @@ const toolCategories: ToolCategory[] = [
       { id: 'savings-calculator', title: 'محاسبه‌گر پس‌انداز', icon: <TrendingUp className="h-8 w-8 text-lime-400" />, component: SavingsCalculator },
       { id: 'percentage-calculator', title: 'محاسبه درصد', icon: <Percent className="h-8 w-8 text-teal-400" />, component: PercentageCalculator },
       { id: 'vat-calculator', title: 'محاسبه ارزش افزوده', icon: <Percent className="h-8 w-8 text-sky-400" />, component: VatCalculator },
-      { id: 'women-health', title: 'ماشین حساب سلامت بانوان', icon: <HeartPulse className="h-8 w-8 text-yellow-400" />, component: WomenHealthCalculator },
+      { id: 'women-health', title: 'ماشین حساب سلامت بانوان', icon: <HeartPulse className="h-8 w-8 text-yellow-400" />, isWip: true },
       { id: 'morse-converter', title: 'مبدل متن ↔ مورس', icon: <Binary className="h-8 w-8 text-amber-400" />, component: MorseConverter },
       { id: 'invoice-generator', title: 'فاکتورساز حرفه‌ای', icon: <ReceiptText className="h-8 w-8 text-indigo-400" />, component: InvoiceGenerator },
        { id: 'gold-coin-calculator', title: 'محاسبه‌گر طلا و سکه', icon: <Gem className="h-8 w-8 text-yellow-400" />, component: GoldCoinCalculator },
@@ -232,16 +238,22 @@ const toolCategories: ToolCategory[] = [
 
 export default function Home() {
   const [mounted, setMounted] = React.useState(false);
-  const [mode, setMode] = React.useState<'full' | 'categories' | null>(null);
+  React.useEffect(() => { setMounted(true); }, []);
   React.useEffect(() => {
-    setMounted(true);
-    const saved = typeof window !== 'undefined' ? window.localStorage.getItem('homeMode') as 'full' | 'categories' | null : null;
-    if (saved) setMode(saved);
-  }, []);
-  const handleSelectMode = (m: 'full' | 'categories') => {
-    setMode(m);
-    try { window.localStorage.setItem('homeMode', m); } catch {}
-  };
+    if (typeof window === 'undefined') return;
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#section-')) {
+      const id = decodeURIComponent(hash.slice(1));
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        el.classList.add('ring-2', 'ring-primary/50');
+        setTimeout(() => {
+          el.classList.remove('ring-2', 'ring-primary/50');
+        }, 1200);
+      }
+    }
+  }, [mounted]);
   const initialPrices: Omit<PriceData, 'cryptos'> = {
     GoldOunce: { price: "2320", change: "+0.2%" },
     MesghalGold: { price: "146500000", change: "-0.5%" },
@@ -270,39 +282,16 @@ export default function Home() {
       <main className="p-4 sm:p-6 lg:p-8">
         <div className="mx-auto max-w-screen-2xl">
 
-          {!mode && (
-            <ModeSelector onSelect={handleSelectMode} />
-          )}
+          <AdvancedLivePrices initialData={initialPrices} />
 
-          {(!mode || mode === 'full') && (
-            <>
-              <AdvancedLivePrices initialData={initialPrices} />
-              <div className="mt-6">
-                <QuotesRotator effect="parallax" />
-                <div className="mt-3 text-right">
-                  <Link href="/quotes" className="text-xs text-yellow-300 hover:underline">مشاهده همه سخن‌ها →</Link>
-                </div>
-              </div>
-            </>
-          )}
-
-          {mode === 'categories' && (
-            <div className="glass-effect rounded-3xl p-4 md:p-8 mb-10">
-              <h2 className="text-2xl font-display font-bold text-foreground mb-6">دسته‌بندی‌ها</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {toolCategories.map((category) => (
-                  <Link key={`cat-${category.title}`} href={`#${category.title}`} className="block card-hover">
-                    <div className="glass-effect rounded-2xl p-4 w-full h-full flex flex-col items-center justify-center text-center gap-3 overflow-hidden">
-                      <div className="w-8 h-8 bg-gradient-to-br from-primary/70 to-accent/70 rounded-lg flex items-center justify-center">
-                        {category.icon}
-                      </div>
-                      <span className="font-semibold text-sm text-foreground">{category.title}</span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+          <div className="mt-6">
+            <QuotesRotator effect="parallax" />
+            <div className="mt-3 text-right">
+              <Link href="/quotes" className="text-xs text-yellow-300 hover:underline">مشاهده همه سخن‌ها →</Link>
             </div>
-          )}
+          </div>
+
+          {/* دسته‌بندی‌ها حذف شد بر اساس درخواست */}
 
 
           {/* Toolbox Shortcuts */}
@@ -315,7 +304,7 @@ export default function Home() {
             </h2>
             <div className="space-y-8">
               {toolCategories.map((category) => (
-                <div key={category.title}>
+                <div key={category.title} id={`section-${slugify(category.title)}`} tabIndex={-1}>
                   <h3 className="text-lg font-semibold font-display text-foreground/90 mb-4 flex items-center gap-3">
                     <div className="w-8 h-8 bg-gradient-to-br from-primary/70 to-accent/70 rounded-lg flex items-center justify-center">
                       {category.icon}
@@ -345,7 +334,7 @@ export default function Home() {
                       }
                       
                       return (
-                      <Link href={`#${tool.id}`} key={`shortcut-${tool.id}`} className="block card-hover">
+                      <Link href={`/tool/${tool.id}?section=${encodeURIComponent(slugify(category.title))}`} key={`shortcut-${tool.id}`} className="block card-hover">
                         {content}
                       </Link>
                     )}
@@ -366,106 +355,6 @@ export default function Home() {
             </div>
           </div>
           
-          {/* Tools Sections */}
-          <div className="space-y-12">
-            {toolCategories.map((category) => (
-              <div key={`category-section-${category.title}`} id={category.title} className="space-y-6">
-                <h2 className="text-2xl font-bold font-display text-foreground text-glow border-r-4 border-primary pr-4">
-                  {category.title}
-                </h2>
-                {category.tools.map((tool) => {
-                    if (tool.isWip) {
-                      return (
-                        <Card key={tool.id} id={tool.id} className="glass-effect scroll-mt-24 opacity-70">
-                            <CardHeader>
-                              <CardTitle className='flex items-center justify-between text-xl font-display text-muted-foreground'>
-                                 <div className='flex items-center gap-3'>
-                                     {React.cloneElement(tool.icon as React.ReactElement, { className: "h-7 w-7" })}
-                                     {tool.title}
-                                 </div>
-                                 <Badge variant="outline">به‌زودی...</Badge>
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="flex flex-col items-center justify-center text-center text-muted-foreground h-24 gap-4">
-                                  <Construction className="w-12 h-12" />
-                                  <p>این ابزار در حال توسعه است و به‌زودی فعال خواهد شد.</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-                      )
-                    }
-                    if (tool.isExternal) {
-                      return (
-                        <a key={tool.id} href={tool.href} target="_blank" rel="noopener noreferrer">
-                            <Card id={tool.id} className="glass-effect card-hover scroll-mt-24">
-                              <CardHeader>
-                                <CardTitle className='flex items-center justify-between text-xl font-display'>
-                                   <div className='flex items-center gap-3'>
-                                       {React.cloneElement(tool.icon as React.ReactElement, { className: "h-7 w-7" })}
-                                       {tool.title}
-                                   </div>
-                                   <div className='flex items-center gap-2 text-sm text-muted-foreground'>
-                                      مشاهده
-                                      <ExternalLink className="h-5 w-5" />
-                                   </div>
-                                </CardTitle>
-                              </CardHeader>
-                            </Card>
-                        </a>
-                      )
-                    }
-
-                    if (tool.id === 'invoice-generator') {
-                      return (
-                        <Accordion type="single" collapsible key={tool.id} id={tool.id} className="glass-effect rounded-2xl border-none scroll-mt-24">
-                          <AccordionItem value="item-1" className="border-b-0">
-                            <AccordionTrigger className="hover:no-underline p-6">
-                               <CardTitle className='flex items-center justify-between text-xl font-display w-full'>
-                                  <div className='flex items-center gap-3'>
-                                   {React.cloneElement(tool.icon as React.ReactElement, { className: "h-7 w-7" })}
-                                   {tool.title}
-                                 </div>
-                               </CardTitle>
-                            </AccordionTrigger>
-                            <AccordionContent>
-                              <InvoiceGenerator />
-                            </AccordionContent>
-                          </AccordionItem>
-                        </Accordion>
-                      )
-                    }
-                    
-                    if (!tool.component) return null;
-                    
-                    const ToolComponent = tool.component;
-                    return (
-                        <Card key={tool.id} id={tool.id} className="glass-effect scroll-mt-24">
-                          <CardHeader>
-                            <CardTitle className='flex items-center justify-between text-xl font-display'>
-                               <div className='flex items-center gap-3'>
-                                {React.cloneElement(tool.icon as React.ReactElement, { className: "h-7 w-7" })}
-                                {tool.title}
-                              </div>
-                            </CardTitle>
-                          </CardHeader>
-                          <ToolComponent />
-                        </Card>
-                    )
-                })}
-                {category.title === 'سرگرمی و بازی' && (
-                    <div className="mt-8 text-center">
-                      <Link href="/games">
-                        <Button variant="secondary" className="h-12 px-6 text-base">
-                          مشاهده همه بازی‌ها
-                          <ArrowLeft className="mr-2 h-5 w-5" />
-                        </Button>
-                      </Link>
-                    </div>
-                  )}
-              </div>
-            ))}
-          </div>
           
            {/* About Us Section */}
            <div className="mt-12 glass-effect rounded-3xl p-6 md:p-8">
@@ -521,83 +410,15 @@ export default function Home() {
                 </span>
             </div>
             
-            <Dialog>
-                <DialogTrigger asChild>
-                    <button className="inline-flex items-center justify-center gap-2 cursor-pointer hover:text-foreground">
-                        <FileText className="w-5 h-5" />
-                        <span>قوانین و مقررات</span>
-                    </button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[600px] glass-effect">
-                    <DialogHeader>
-                        <DialogTitle className="text-2xl font-display">قوانین استفاده از «تبدیلا»</DialogTitle>
-                         <DialogDescription>
-                            استفاده از این وب‌سایت به منزله پذیرش کامل قوانین زیر است.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <ScrollArea className="max-h-[70vh] rounded-md">
-                        <div className="space-y-4 text-right leading-relaxed p-1 pr-3">
-                            <div className="space-y-3">
-                                <div>
-                                    <h4 className="font-semibold text-foreground">۱. استفاده منصفانه</h4>
-                                    <p>تمام ابزارها برای استفاده شخصی و قانونی طراحی شده‌اند. هرگونه استفاده غیرقانونی، سوءاستفاده یا بارگذاری محتوای خلاف مقررات، مجاز نیست و پیگرد قانونی خواهد داشت.</p>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-foreground">۲. حقوق مالکیت فکری</h4>
-                                    <p>کلیه حقوق مادی و معنوی این وب‌سایت، شامل کدها، طراحی، محتوا و داده‌ها، متعلق به «تبدیلا» است. هرگونه کپی‌برداری یا انتشار بدون اجازه کتبی، ممنوع می‌باشد.</p>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-foreground">۳. مسئولیت داده‌ها</h4>
-                                    <p>اطلاعات و نتایج ارائه‌شده توسط ابزارها، صرفاً جنبه اطلاع‌رسانی دارند. «تبدیلا» هیچ‌گونه مسئولیتی در قبال تصمیمات مالی، حقوقی یا شخصی کاربران بر اساس این داده‌ها بر عهده نمی‌گیرد و مسئولیت نهایی استفاده از آن‌ها با خود کاربر است.</p>
-                                </div>
-                                 <div>
-                                    <h4 className="font-semibold text-foreground">۴. تغییرات قوانین</h4>
-                                    <p>«تبدیلا» حق به‌روزرسانی یا اصلاح این قوانین را در هر زمان و بدون اطلاع قبلی برای خود محفوظ می‌دارد. نسخه جدید قوانین بلافاصله پس از انتشار در سایت معتبر خواهد بود.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </ScrollArea>
-                </DialogContent>
-            </Dialog>
+            <Link href="/terms" className="inline-flex items-center justify-center gap-2 cursor-pointer hover:text-foreground relative z-10" role="button" tabIndex={0}>
+                <FileText className="w-5 h-5" />
+                <span>قوانین و مقررات</span>
+            </Link>
 
-            <Dialog>
-                <DialogTrigger asChild>
-                     <button className="inline-flex items-center justify-center gap-2 cursor-pointer hover:text-foreground">
-                        <Shield className="w-5 h-5" />
-                        <span>سیاست حفظ حریم خصوصی</span>
-                    </button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[600px] glass-effect">
-                    <DialogHeader>
-                        <DialogTitle className="text-2xl font-display">🔒 سیاست حفظ حریم خصوصی</DialogTitle>
-                         <DialogDescription>
-                            حفظ حریم خصوصی شما اولویت اصلی ماست.
-                        </DialogDescription>
-                    </DialogHeader>
-                     <ScrollArea className="max-h-[70vh] rounded-md">
-                        <div className="space-y-4 text-right leading-relaxed p-1 pr-3">
-                            <div className="space-y-3">
-                                <div>
-                                    <h4 className="font-semibold text-foreground">۱. اطلاعات جمع‌آوری شده</h4>
-                                    <p>ما هیچ‌گونه اطلاعات شخصی شناسایی‌پذیر (مانند نام، ایمیل و...) را بدون اجازه مستقیم شما جمع‌آوری نمی‌کنیم. برای ابزارهایی مانند خلاصه‌ساز متن که نیاز به پردازش در سرور دارند، فقط آدرس IP شما به صورت موقت برای جلوگیری از سوءاستفاده (Rate Limiting) ذخیره و سپس حذف می‌شود.</p>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-foreground">۲. استفاده از کوکی‌ها</h4>
-                                    <p>«تبدیلا» از کوکی‌ها فقط برای ذخیره تنظیمات ظاهری شما (مانند تم روشن/تاریک) و وضعیت نصب اپلیکیشن (PWA) استفاده می‌کند. هیچ اطلاعات شخصی در کوکی‌ها ذخیره نمی‌شود.</p>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-foreground">۳. امنیت داده‌ها</h4>
-                                    <p>ارتباط شما با سرورهای «تبدیلا» از طریق پروتکل امن SSL/TLS انجام می‌شود. ما متعهد به حفاظت از داده‌های شما در برابر هرگونه دسترسی غیرمجاز هستیم.</p>
-                                </div>
-                                 <div>
-                                    <h4 className="font-semibold text-foreground">۴. سرویس‌های شخص ثالث</h4>
-                                    <p>برخی از قابلیت‌های سایت مانند مدل‌های هوش مصنوعی توسط سرویس‌دهندگان معتبر (مانند Google AI) ارائه می‌شوند. داده‌های ارسالی به این سرویس‌ها تابع قوانین حریم خصوصی آن‌ها خواهد بود و «تبدیلا» دسترسی مستقیمی به محتوای آن‌ها ندارد.</p>
-                                 </div>
-                            </div>
-                        </div>
-                    </ScrollArea>
-                </DialogContent>
-            </Dialog>
+            <Link href="/privacy" className="inline-flex items-center justify-center gap-2 cursor-pointer hover:text-foreground relative z-10" role="button" tabIndex={0}>
+                <Shield className="w-5 h-5" />
+                <span>سیاست حفظ حریم خصوصی</span>
+            </Link>
 
              <a href="mailto:feedback@tabdila.com?subject=انتقادات و پیشنهادات درباره تبدیلا" className="inline-flex items-center justify-center gap-2 cursor-pointer hover:text-foreground">
                 <MessageSquareHeart className="w-5 h-5" />

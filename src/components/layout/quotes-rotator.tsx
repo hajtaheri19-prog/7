@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Quote } from 'lucide-react';
-type QuoteItem = { id: number; author: string; text: string; tags?: string[] };
+type QuoteItem = { body: string; author: string; id?: number; text?: string; tags?: string[] };
 
 export default function QuotesRotator({ effect = 'fade', mode = 'random' }: { effect?: 'fade' | 'parallax' | 'flip3d', mode?: 'random' | 'daily' }) {
   const [mounted, setMounted] = useState(false);
@@ -15,10 +15,10 @@ export default function QuotesRotator({ effect = 'fade', mode = 'random' }: { ef
 
   useEffect(() => {
     setMounted(true);
-    fetch('/data/quotes.json')
+    fetch('/quotes/2.json')
       .then(r => r.json())
       .then((data: QuoteItem[]) => {
-        const items = Array.isArray(data) ? data : [];
+        const items = Array.isArray(data) ? data.map((item, idx) => ({ ...item, id: item.id || idx, text: item.body || item.text || '' })) : [];
         setAll(items);
         if (mode === 'daily') {
           const seed = new Date().toISOString().slice(0, 10);
@@ -29,11 +29,11 @@ export default function QuotesRotator({ effect = 'fade', mode = 'random' }: { ef
           try {
             const key = 'quotes_seen_ids';
             const seen: number[] = JSON.parse(localStorage.getItem(key) || '[]');
-            const available = items.filter(q => !seen.includes(q.id));
+            const available = items.filter(q => !seen.includes(q.id || 0));
             const pool = available.length ? available : items;
             const pick = pool[Math.floor(Math.random() * (pool.length || 1))];
-            setIndex(items.findIndex(q => q.id === pick.id));
-            const nextSeen = available.length ? [...seen, pick.id] : [pick.id];
+            setIndex(items.findIndex(q => (q.id || 0) === (pick.id || 0)));
+            const nextSeen = available.length ? [...seen, pick.id || 0] : [pick.id || 0];
             localStorage.setItem(key, JSON.stringify(nextSeen.slice(-1000)));
           } catch {
             setIndex(Math.floor(Math.random() * (items.length || 1)));

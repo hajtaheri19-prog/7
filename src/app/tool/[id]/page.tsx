@@ -113,7 +113,7 @@ export default function ToolPage() {
           {!Comp ? (
             <Card className="glass-effect">
               <CardHeader>
-                <CardTitle className="text-lg">{mounted ? 'این ابزار موجود نیست یا خارجی است.' : 'در حال بارگذاری ابزار...'}</CardTitle>
+                <CardTitle className="text-lg">این ابزار موجود نیست یا خارجی است.</CardTitle>
               </CardHeader>
             </Card>
           ) : (

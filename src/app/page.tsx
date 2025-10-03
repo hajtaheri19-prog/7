@@ -101,6 +101,12 @@ const SelfConfidenceTest = dynamic(() => import('@/components/features/self-conf
 const MehriehCalculator = dynamic(() => import('@/components/features/mehrieh-calculator'), { loading: () => <LoadingComponent /> });
 const ExecutionFee = dynamic(() => import('@/components/features/execution-fee'), { loading: () => <LoadingComponent /> });
 const AttorneyFee = dynamic(() => import('@/components/features/attorney-fee'), { loading: () => <LoadingComponent /> });
+const HafezFortune = dynamic(() => import('@/components/features/hafez-fortune'), { loading: () => <LoadingComponent /> });
+const ColorVisionTest = dynamic(() => import('@/components/features/color-vision-test'), { loading: () => <LoadingComponent /> });
+const HearingTest = dynamic(() => import('@/components/features/hearing-test'), { loading: () => <LoadingComponent /> });
+const InflationCalculator = dynamic(() => import('@/components/features/inflation-calculator'), { loading: () => <LoadingComponent /> });
+const ReadingTimeCalculator = dynamic(() => import('@/components/features/reading-time-calculator'), { loading: () => <LoadingComponent /> });
+const TimestampConverter = dynamic(() => import('@/components/features/timestamp-converter'), { loading: () => <LoadingComponent /> });
 
 interface Tool {
     id: string;
@@ -148,6 +154,7 @@ const toolCategories: ToolCategory[] = [
       { id: 'base-converter', title: 'مبدل مبنای اعداد', icon: <Binary className="h-8 w-8 text-orange-400" />, component: BaseConverter },
       { id: 'color-converter', title: 'مبدل رنگ (HEX, RGB, HSL)', icon: <Palette className="h-8 w-8 text-rose-400" />, component: ColorConverter },
       { id: 'base64-converter', title: 'تبدیل متن و فایل به Base64', icon: <Hash className="h-8 w-8 text-violet-400" />, component: Base64Converter },
+      { id: 'timestamp-converter', title: 'مبدل تایم‌استمپ', icon: <Clock className="h-8 w-8 text-sky-400" />, component: TimestampConverter },
     ]
   },
   {
@@ -174,6 +181,8 @@ const toolCategories: ToolCategory[] = [
       { id: 'percentage-calculator', title: 'محاسبه درصد', icon: <Percent className="h-8 w-8 text-teal-400" />, component: PercentageCalculator },
       { id: 'vat-calculator', title: 'محاسبه ارزش افزوده', icon: <Percent className="h-8 w-8 text-sky-400" />, component: VatCalculator },
       { id: 'women-health', title: 'ماشین حساب سلامت بانوان', icon: <HeartPulse className="h-8 w-8 text-yellow-400" />, isWip: true },
+      { id: 'inflation-calculator', title: 'ماشین شهودی تبدیل ارزش پول', icon: <TrendingUp className="h-8 w-8 text-red-400" />, component: InflationCalculator },
+      { id: 'reading-time-calculator', title: 'محاسبه زمان خواندن متن', icon: <FileText className="h-8 w-8 text-indigo-400" />, component: ReadingTimeCalculator },
       { id: 'morse-converter', title: 'مبدل متن ↔ مورس', icon: <Binary className="h-8 w-8 text-amber-400" />, component: MorseConverter },
       { id: 'invoice-generator', title: 'فاکتورساز حرفه‌ای', icon: <ReceiptText className="h-8 w-8 text-indigo-400" />, component: InvoiceGenerator },
        { id: 'gold-coin-calculator', title: 'محاسبه‌گر طلا و سکه', icon: <Gem className="h-8 w-8 text-yellow-400" />, component: GoldCoinCalculator },
@@ -193,6 +202,8 @@ const toolCategories: ToolCategory[] = [
       { id: 'beck-depression-test', title: 'تست افسردگی بک', icon: <Brain className="h-8 w-8 text-rose-400" />, component: BeckDepressionTest },
       { id: 'happiness-test', title: 'تست میزان خوشبختی', icon: <Smile className="h-8 w-8 text-yellow-400" />, component: HappinessTest, isWip: undefined },
       { id: 'self-confidence-test', title: 'تست اعتماد به نفس', icon: <Shield className="h-8 w-8 text-blue-400" />, component: SelfConfidenceTest },
+      { id: 'color-vision-test', title: 'تست بینایی و رنگ‌بینی', icon: <Palette className="h-8 w-8 text-rose-400" />, component: ColorVisionTest },
+      { id: 'hearing-test', title: 'تست شنوایی', icon: <Smile className="h-8 w-8 text-blue-400" />, component: HearingTest },
     ]
   },
   {
@@ -203,6 +214,7 @@ const toolCategories: ToolCategory[] = [
       { id: 'guess-the-number', title: 'حدس عدد', icon: <Hash className="h-8 w-8 text-fuchsia-400" />, component: GuessTheNumber, mode: 'مقابل سیستم' },
       { id: 'memory-game', title: 'بازی حافظه', icon: <BrainCircuit className="h-8 w-8 text-sky-400" />, component: MemoryGame, mode: 'تک نفره' },
       { id: '2048', title: 'بازی 2048', icon: <RectangleEllipsis className="h-8 w-8 text-indigo-400" />, component: Game2048, mode: 'تک نفره' },
+      { id: 'hafez-fortune', title: 'فال حافظ', icon: <Gem className="h-8 w-8 text-yellow-500" />, component: HafezFortune },
     ]
   },
   {
@@ -282,14 +294,11 @@ export default function Home() {
       <main className="p-4 sm:p-6 lg:p-8">
         <div className="mx-auto max-w-screen-2xl">
 
-          <AdvancedLivePrices initialData={initialPrices} />
-
-          <div className="mt-6">
-            <QuotesRotator effect="parallax" />
-            <div className="mt-3 text-right">
-              <Link href="/quotes" className="text-xs text-yellow-300 hover:underline">مشاهده همه سخن‌ها →</Link>
-            </div>
+          <div className="mt-2">
+            <QuotesRotator effect="flip3d" />
           </div>
+
+          <AdvancedLivePrices initialData={{} as any} />
 
           {/* دسته‌بندی‌ها حذف شد بر اساس درخواست */}
 
@@ -363,10 +372,10 @@ export default function Home() {
                     <Info className="h-10 w-10 text-primary-foreground"/>
                 </div>
                <div className='flex-grow'>
-                  <h3 className="text-xl font-semibold font-display text-foreground">درباره «تبدیلا»</h3>
-                  <p className="text-muted-foreground mt-2 leading-relaxed">
-                   «تبدیلا» دستیار هوشمند شما برای تمام لحظاتی است که به محاسبات و تبدیلات سریع و دقیق نیاز دارید. ما در «تبدیلا» با وسواس، مجموعه‌ای از بهترین ابزارهای روزمره را در یک پلتفرم مدرن و چشم‌نواز گرد هم آورده‌ایم تا کار شما را آسان‌تر کنیم.
-                  </p>
+                 <h3 className="text-xl font-semibold font-display text-foreground">درباره «تبدیلا»</h3>
+                 <p className="text-muted-foreground mt-2 leading-relaxed">
+                  «تبدیلا» فقط یک ابزار نیست؛ یک دستیار هوشمند برای تمام لحظاتی است که به محاسبات و تبدیلات سریع، دقیق و زیبا نیاز دارید. ما با وسواس، مجموعه‌ای از بهترین ابزارهای روزمره را در یک پلتفرم مدرن و چشم‌نواز گرد هم آورده‌ایم تا کار شما را آسان‌تر کنیم.
+                 </p>
                </div>
              </div>
            </div>
@@ -381,16 +390,20 @@ export default function Home() {
                     <div>
                         <h3 className="text-xl font-semibold font-display text-foreground">حمایت از توسعه «تبدیلا»</h3>
                         <p className="text-muted-foreground mt-2">
-                           اگر «تبدیلا» برایتان مفید بوده، با حمایت خود به رشد و پیشرفت آن کمک کنید. هر حمایتی، انرژی ما را برای ساخت ابزارهای بهتر دوچندان می‌کند.
+                          اگر «تبدیلا» برایتان مفید بوده، با حمایت خود به رشد و پیشرفت آن کمک کنید. هر حمایتی، انرژی ما را برای ساخت ابزارهای بهتر دوچندان می‌کند.
                         </p>
                     </div>
                 </div>
                  <a href="https://idpay.ir/tbdila" target="_blank" rel="noopener noreferrer">
-                    <Button className="bg-pink-500 hover:bg-pink-600 text-white font-bold h-12 px-8 text-base shrink-0">
+                    <Button className="relative h-12 px-8 text-base shrink-0 font-bold text-white bg-gradient-to-r from-pink-500 via-rose-500 to-fuchsia-600 hover:from-pink-600 hover:via-rose-600 hover:to-fuchsia-700 shadow-[0_8px_30px_rgba(244,114,182,0.45)] overflow-hidden rounded-2xl">
+                      <span className="relative z-10 inline-flex items-center">
                         حمایت می‌کنم
                         <ArrowLeft className="mr-2 h-5 w-5" />
+                      </span>
+                      <span className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_30%_10%,white_0%,transparent_35%)]" />
+                      <span className="absolute -inset-1 rounded-2xl ring-1 ring-white/10" />
                     </Button>
-                </a>
+                 </a>
             </div>
            </div>
         </div>
@@ -420,10 +433,10 @@ export default function Home() {
                 <span>سیاست حفظ حریم خصوصی</span>
             </Link>
 
-             <a href="mailto:feedback@tabdila.com?subject=انتقادات و پیشنهادات درباره تبدیلا" className="inline-flex items-center justify-center gap-2 cursor-pointer hover:text-foreground">
+            <Link href="/feedback" className="inline-flex items-center justify-center gap-2 cursor-pointer hover:text-foreground relative z-10" role="button" tabIndex={0}>
                 <MessageSquareHeart className="w-5 h-5" />
                 <span>انتقادات و پیشنهادات</span>
-            </a>
+            </Link>
 
         </div>
         <div className="inline-flex items-center justify-center gap-2 pt-2 border-t border-border/50 w-full max-w-lg mx-auto mt-4">

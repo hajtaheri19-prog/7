@@ -11,18 +11,25 @@ import { Slider } from '@/components/ui/slider';
 import { Clipboard, Download, Play, StopCircle } from 'lucide-react';
 
 const LETTERS: Record<string, string> = {
+  // English
   "a": ".-", "b": "-...", "c": "-.-.", "d": "-..", "e": ".", "f": "..-.", "g": "--.", "h": "....", "i": "..", "j": ".---",
   "k": "-.-", "l": ".-..", "m": "--", "n": "-.", "o": "---", "p": ".--.", "q": "--.-", "r": ".-.", "s": "...", "t": "-",
   "u": "..-", "v": "...-", "w": ".--", "x": "-..-", "y": "-.--", "z": "--..",
+  // Persian/Farsi
+  "ا": ".-", "ب": "-...", "پ": ".--.", "ت": "-", "ث": "-.-..", "ج": ".---", "چ": "---.", "ح": "....", "خ": "-..-",
+  "د": "-..", "ذ": "--.--", "ر": ".-.", "ز": "--..", "ژ": ".----", "س": "...", "ش": "----", "ص": "-.-.-", "ض": "...-",
+  "ط": "..-", "ظ": "-.--", "ع": ".-.-", "غ": "--.-", "ف": "..-.", "ق": "--.-.", "ک": "-.-", "گ": "--..",
+  "ل": ".-..", "م": "--", "ن": "-.", "و": ".--", "ه": "..-..", "ی": "..", "ء": ".", "آ": ".-.-",
+  // Numbers (both English and Persian)
   "0": "-----", "1": ".----", "2": "..---", "3": "...--", "4": "....-", "5": ".....", "6": "-....", "7": "--...", "8": "---..", "9": "----.",
+  "۰": "-----", "۱": ".----", "۲": "..---", "۳": "...--", "۴": "....-", "۵": ".....", "۶": "-....", "۷": "--...", "۸": "---..", "۹": "----.",
   " ": "/"
 };
 
 function textToMorse(text: string, delimiter: string) {
   return text
-    .toLowerCase()
     .split("")
-    .map(ch => LETTERS[ch] || "")
+    .map(ch => LETTERS[ch.toLowerCase()] || "")
     .filter(Boolean)
     .join(delimiter);
 }
@@ -34,7 +41,7 @@ function morseToText(morse: string) {
 
 export default function MorseConverter() {
   const [mode, setMode] = useState<'t2m' | 'm2t'>('t2m');
-  const [text, setText] = useState('سلام Tabdila');
+  const [text, setText] = useState('سلام تبدیلا Hello');
   const [morse, setMorse] = useState('');
   const [delimiter, setDelimiter] = useState<'space' | 'slash' | 'bar'>('space');
   const [speed, setSpeed] = useState<number>(120); // WPM-ish scale
@@ -79,7 +86,7 @@ export default function MorseConverter() {
     <Card className="glass-effect border-0 bg-gradient-to-br from-black/40 via-zinc-900/40 to-black/30 backdrop-blur-xl">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          <span className="text-lg font-display">مبدل متن ↔ مورس</span>
+          <span className="text-lg font-display">مبدل متن ↔ مورس (فارسی/انگلیسی)</span>
           <div ref={ledRef} className="w-3 h-3 rounded-full bg-zinc-600 shadow-[0_0_10px_rgba(0,0,0,0.4)]" />
         </CardTitle>
       </CardHeader>

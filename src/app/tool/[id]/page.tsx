@@ -83,6 +83,13 @@ const components: Record<string, React.ComponentType | null> = {
   'utm-builder': dynamic(() => import('@/components/features/utm-builder'), { ssr: false, loading: LoadingFallback }),
   'whatsapp-link': dynamic(() => import('@/components/features/whatsapp-link'), { ssr: false, loading: LoadingFallback }),
   'lorem-ipsum': dynamic(() => import('@/components/features/lorem-ipsum'), { ssr: false, loading: LoadingFallback }),
+  'persian-keyboard': dynamic(() => import('@/components/features/persian-keyboard'), { ssr: false, loading: LoadingFallback }),
+  'color-vision-test': dynamic(() => import('@/components/features/color-vision-test'), { ssr: false, loading: LoadingFallback }),
+  'hearing-test': dynamic(() => import('@/components/features/hearing-test'), { ssr: false, loading: LoadingFallback }),
+  'timestamp-converter': dynamic(() => import('@/components/features/timestamp-converter'), { ssr: false, loading: LoadingFallback }),
+  'date-difference-calculator': dynamic(() => import('@/components/features/date-difference-calculator'), { ssr: false, loading: LoadingFallback }),
+  'social-media-sharing': dynamic(() => import('@/components/features/social-media-sharing'), { ssr: false, loading: LoadingFallback }),
+  'hafez-fortune': dynamic(() => import('@/components/features/hafez-fortune'), { ssr: false, loading: LoadingFallback }),
 };
 
 export default function ToolPage() {

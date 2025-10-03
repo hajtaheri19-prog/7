@@ -90,18 +90,18 @@ export default function QuotesRotator({ effect = 'flip3d', mode = 'random' }: { 
         <div className="absolute -inset-20 bg-[radial-gradient(circle_at_bottom_right,rgba(250,204,21,0.08),transparent_50%)]" />
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent" />
       </div>
-      <div className="relative p-4 md:p-6 flex items-start gap-4">
+      <div className="relative p-4 md:p-5 flex items-start gap-4">
         <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl border border-yellow-400/40 bg-gradient-to-br from-yellow-500/40 to-yellow-300/20 shadow-[0_0_25px_#eab30855] flex items-center justify-center shrink-0 backdrop-blur-sm">
           <Quote className="w-5 h-5 md:w-6 md:h-6 text-yellow-100" />
         </div>
         <div className="flex-1">
-          <div className="text-[11px] md:text-xs font-semibold text-yellow-200/90 tracking-wider mb-1">✨ سخن بزرگان ✨</div>
+          <div className="text-[10px] md:text-xs font-semibold text-yellow-200/90 tracking-wider mb-1">✨ سخن بزرگان ✨</div>
           <div className={
             effect === 'flip3d'
-              ? "text-[15px] md:text-[22px] leading-8 md:leading-9 text-foreground animate-in fade-in font-display font-semibold [text-shadow:0_0_24px_rgba(234,179,8,0.16)]"
+              ? "text-[14px] md:text-[18px] leading-7 md:leading-8 text-foreground animate-in fade-in font-display font-semibold [text-shadow:0_0_18px_rgba(234,179,8,0.14)]"
               : effect === 'parallax'
-              ? "text-[15px] md:text-[22px] leading-8 md:leading-9 text-foreground animate-in fade-in [transform:translateY(4px)] font-display font-semibold"
-              : "text-[15px] md:text-[22px] leading-8 md:leading-9 text-foreground animate-in fade-in slide-in-from-bottom-1 font-display font-semibold"
+              ? "text-[14px] md:text-[18px] leading-7 md:leading-8 text-foreground animate-in fade-in [transform:translateY(4px)] font-display font-semibold"
+              : "text-[14px] md:text-[18px] leading-7 md:leading-8 text-foreground animate-in fade-in slide-in-from-bottom-1 font-display font-semibold"
           }>
             <span className="text-yellow-400/80 align-middle">“</span>
             {getDisplayText(current.text || '')}
@@ -115,11 +115,11 @@ export default function QuotesRotator({ effect = 'flip3d', mode = 'random' }: { 
               {isExpanded ? 'کمتر' : 'مشاهده کامل'}
             </button>
           )}
-          <div className="mt-3 flex items-center gap-3">
-            <div className="w-7 h-7 rounded-full bg-yellow-500/25 border border-yellow-400/30 text-[11px] text-yellow-100 flex items-center justify-center">
+          <div className="mt-2 flex items-center gap-3">
+            <div className="w-6 h-6 rounded-full bg-yellow-500/25 border border-yellow-400/30 text-[10px] text-yellow-100 flex items-center justify-center">
               {(current.author || 'ح').slice(0, 1)}
             </div>
-            <div className="text-xs md:text-sm text-yellow-200 font-semibold">— {current.author || 'حکیم'}</div>
+            <div className="text-[11px] md:text-xs text-yellow-200 font-semibold">— {current.author || 'حکیم'}</div>
           </div>
         </div>
       </div>

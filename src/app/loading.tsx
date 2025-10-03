@@ -30,28 +30,18 @@ export default function Loading() {
         ))}
       </div>
 
-      <div className="text-center p-8 glass-effect rounded-3xl shadow-2xl flex flex-col items-center gap-6 relative z-10 backdrop-blur-xl border border-white/10">
+      <div className="text-center p-10 md:p-12 glass-effect rounded-3xl shadow-2xl flex flex-col items-center gap-6 relative z-10 backdrop-blur-xl border border-white/10 max-w-md w-[90%]">
         {/* Logo with enhanced animation */}
         {logo && (
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/50 to-accent/50 rounded-full blur-lg animate-pulse"></div>
-            <Image
-              src={logo.imageUrl}
-              width={100}
-              height={100}
-              alt="لوگوی تبدیلا"
-              className="animate-float relative z-10 drop-shadow-2xl"
-              data-ai-hint={logo.imageHint}
-            />
-            <div className="absolute -top-2 -right-2">
-              <Sparkles className="w-6 h-6 text-yellow-400 animate-spin" />
-            </div>
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/40 to-accent/40 rounded-full blur-lg animate-pulse"></div>
+            <Image src={logo.imageUrl} width={96} height={96} alt="لوگوی تبدیلا" className="relative z-10 drop-shadow-2xl" />
           </div>
         )}
 
         {/* Main loading text with enhanced styling */}
         <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center gap-3 text-3xl font-bold text-primary text-glow">
+          <div className="flex items-center gap-3 text-2xl md:text-3xl font-bold text-primary text-glow">
             <Loader2 className="animate-spin w-8 h-8" />
             <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               تبدیلا

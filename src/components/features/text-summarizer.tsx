@@ -11,6 +11,7 @@ import { ZodError } from 'zod';
 import { Progress } from '../ui/progress';
 
 const MIN_CHARS = 100;
+const DAILY_LIMIT = 10; // per user (client-side)
 
 export default function TextSummarizer() {
   const [originalText, setOriginalText] = useState('');
@@ -21,6 +22,30 @@ export default function TextSummarizer() {
   const charCount = originalText.length;
   const progress = Math.min((charCount / MIN_CHARS) * 100, 100);
 
+  const remainingToday = () => {
+    try {
+      const key = 'sum_usage';
+      const raw = localStorage.getItem(key);
+      const today = new Date().toISOString().slice(0,10);
+      if (!raw) return DAILY_LIMIT;
+      const obj = JSON.parse(raw);
+      if (obj.date !== today) return DAILY_LIMIT;
+      return Math.max(0, DAILY_LIMIT - (obj.count || 0));
+    } catch { return DAILY_LIMIT; }
+  };
+
+  const bumpUsage = () => {
+    try {
+      const key = 'sum_usage';
+      const today = new Date().toISOString().slice(0,10);
+      const raw = localStorage.getItem(key);
+      const obj = raw ? JSON.parse(raw) : { date: today, count: 0 };
+      if (obj.date !== today) { obj.date = today; obj.count = 0; }
+      obj.count += 1;
+      localStorage.setItem(key, JSON.stringify(obj));
+    } catch {}
+  };
+
   const handleSummarize = async () => {
     setLoading(true);
     setSummary('');
@@ -29,17 +54,24 @@ export default function TextSummarizer() {
       if(originalText.length < MIN_CHARS) {
           throw new Error(`متن برای خلاصه‌سازی باید حداقل ${MIN_CHARS} کاراکتر باشد.`);
       }
-
-      // Simulate API call since flow is disabled
-      setTimeout(() => {
-        setSummary('سرویس خلاصه‌ساز متن در حال حاضر در دسترس نیست. لطفاً بعداً تلاش کنید.');
-        setLoading(false);
-        toast({
-            title: 'سرویس غیرفعال است',
-            description: 'قابلیت خلاصه‌ساز به طور موقت غیرفعال است.',
-            variant: 'destructive'
-        });
-      }, 1000);
+      if (remainingToday() <= 0) {
+        throw new Error('سهمیه امروز شما برای خلاصه‌سازی به پایان رسیده است. لطفاً فردا دوباره تلاش کنید.');
+      }
+      const resp = await fetch('/api/summarize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: originalText })
+      });
+      const json = await resp.json();
+      if (!resp.ok) {
+        const msg = json?.message || json?.error || 'خطا در دریافت نتیجه از سرویس خلاصه‌ساز';
+        throw new Error(msg);
+      }
+      const out = (json?.summary || '').toString();
+      if (!out) throw new Error('خروجی معتبری از سرویس دریافت نشد.');
+      setSummary(out);
+      bumpUsage();
+      toast({ title: 'خلاصه آماده شد', description: 'متن شما با موفقیت خلاصه شد.' });
 
     } catch (error: any) {
       console.error(error);
@@ -101,6 +133,9 @@ export default function TextSummarizer() {
             <p className="text-xs text-muted-foreground text-left" dir='ltr'>
                 {charCount.toLocaleString('fa-IR')} / {MIN_CHARS.toLocaleString('fa-IR')}
             </p>
+        </div>
+        <div className="text-xs text-muted-foreground">
+          سهمیه روزانه: {remainingToday().toLocaleString('fa-IR')} خلاصه دیگر
         </div>
       </div>
       

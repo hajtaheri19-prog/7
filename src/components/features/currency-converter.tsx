@@ -20,13 +20,24 @@ export default function CurrencyConverter() {
   const { toast } = useToast();
 
   useEffect(() => {
+    const parseNum = (s: string) => {
+      const n = Number(String(s || '').replace(/[^0-9.\-]/g, ''));
+      return Number.isFinite(n) ? n : 0;
+    };
     async function getLiveRates() {
       try {
-        // AI Flow is disabled, using default rate.
-        console.log("Currency rates are using default mock data as AI flows are disabled.");
+        // Fetch from our live prices endpoint (TGJU source)
+        const res = await fetch('/api/live-prices', { cache: 'no-store' });
+        const json = await res.json();
+        const dollar = parseNum(json?.data?.Dollar?.price);
+        if (dollar > 0) {
+          setLiveRates({ 'USD-IRR': dollar });
+        } else {
+          setLiveRates({ 'USD-IRR': DEFAULT_USD_RATE });
+        }
       } catch (error) {
         console.error("Could not fetch live dollar price:", error);
-        // It will use the default mock rate
+        setLiveRates({ 'USD-IRR': DEFAULT_USD_RATE });
       }
     }
     getLiveRates();

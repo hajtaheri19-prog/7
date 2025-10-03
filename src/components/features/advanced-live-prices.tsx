@@ -95,7 +95,7 @@ function getIconForTitle(title: string) {
   const t = title.replace(/\s+/g, '').toLowerCase();
   // Persian keywords
   if (t.includes('انس') || t.includes('طلا') || t.includes('mesghal') || t.includes('mesqal')) return { icon: <Gem className="w-5 h-5 text-yellow-300" />, bg: 'from-yellow-500/40 to-amber-400/30' };
-  if (t.includes('مثقال') || t.includes('گرم18') || t.includes('طلا18')) return { icon: <Gem className="w-5 h-5 text-yellow-300" />, bg: 'from-yellow-500/40 to-amber-400/30' };
+  if (t.includes('مثقال') || t.includes('گرم18') || t.includes('طلا 18 عیار')) return { icon: <Gem className="w-5 h-5 text-yellow-300" />, bg: 'from-yellow-500/40 to-amber-400/30' };
   if (t.includes('سکه')) return { icon: <Coins className="w-5 h-5 text-amber-200" />, bg: 'from-amber-500/40 to-yellow-400/30' };
   if (t.includes('دلار') || t.includes('usd')) return { icon: <Banknote className="w-5 h-5 text-emerald-200" />, bg: 'from-emerald-500/40 to-teal-400/30' };
   if (t.includes('تتر') || t.includes('usdt') || t.includes('tether')) return { icon: <CircleDollarSign className="w-5 h-5 text-cyan-200" />, bg: 'from-cyan-500/40 to-sky-400/30' };
@@ -105,11 +105,24 @@ function getIconForTitle(title: string) {
   return { icon: <CandlestickChart className="w-5 h-5 text-yellow-200" />, bg: 'from-yellow-500/30 to-amber-400/20' };
 }
 
+const normalizeTitle = (title: string): string => {
+  const raw = (title || '').trim();
+  const t = raw.replace(/\s+/g, '').toLowerCase();
+  if (t.includes('گرم18') || t.includes('طلا 18 عیار') || t.includes('طلاآهنگ18') || t.includes('geram18') || t.includes('gold18')) {
+    return 'طلای ۱۸ عیار';
+  }
+  if (t.includes('سکه')) {
+    return 'سکه امامی';
+  }
+  return raw;
+};
+
 const TGJUCard = ({ item }: { item: TGJUItem }) => {
   const { icon, bg } = getIconForTitle(item.title || '');
   const unit = getUnitFromTitle(item.title || '');
   // Normalize price to Persian digits with grouping
   const formattedPrice = toFaNum(item.price);
+  const displayTitle = normalizeTitle(item.title || '');
   return (
     <div className="glass-effect rounded-2xl p-3 card-hover w-full flex-shrink-0">
       <div className="flex items-center gap-2">
@@ -117,7 +130,7 @@ const TGJUCard = ({ item }: { item: TGJUItem }) => {
           {icon}
         </div>
         <div className="flex-grow text-right">
-          <h3 className="text-foreground font-display font-semibold text-sm truncate">{item.title}</h3>
+          <h3 className="text-foreground font-display font-semibold text-sm truncate">{displayTitle}</h3>
         </div>
       </div>
       <div className="mt-2 text-right">

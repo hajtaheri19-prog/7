@@ -55,17 +55,26 @@ export default function LegalFinancialChatbot() {
     setMessages(prev => [...prev, userMessage]);
     reset();
 
-    // Simulate bot response since flow is disabled
-    setTimeout(() => {
-        const botMessage: Message = { role: 'bot', content: 'سرویس چت‌بات در حال حاضر در دسترس نیست. لطفاً بعداً تلاش کنید.' };
-        setMessages(prev => [...prev, botMessage]);
-        setLoading(false);
-        toast({
-            title: 'سرویس غیرفعال است',
-            description: 'قابلیت چت‌بات حقوقی و مالی به طور موقت غیرفعال است.',
-            variant: 'destructive'
-        });
-    }, 1000);
+    try {
+      const history = messages.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content }));
+      const resp = await fetch('/api/legal-bot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: data.prompt, history })
+      });
+      const json = await resp.json();
+      if (!resp.ok) {
+        const msg = json?.message || json?.error || 'خطا در دریافت پاسخ از سرور';
+        throw new Error(msg);
+      }
+      const botMessage: Message = { role: 'bot', content: (json?.reply || '').toString() };
+      setMessages(prev => [...prev, botMessage]);
+    } catch (e: any) {
+      setMessages(prev => [...prev, { role: 'bot', content: 'متاسفانه خطایی رخ داد. لطفاً بعداً تلاش کنید.' }]);
+      toast({ title: 'خطا', description: e?.message || 'مشکل غیرمنتظره', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

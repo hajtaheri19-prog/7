@@ -33,9 +33,16 @@ export default function HafezFortune() {
     setIsLoading(true);
     (async () => {
       try {
-        const res = await fetch('/api/hafez', { cache: 'no-store' });
-        if (!res.ok) throw new Error('network');
-        const fortune = await res.json() as HafezFortune;
+        let fortune: HafezFortune | null = null;
+        let tries = 0;
+        while (tries < 4 && !fortune) {
+          const res = await fetch('/api/hafez', { cache: 'no-store' });
+          if (res.ok) {
+            fortune = await res.json() as HafezFortune;
+          }
+          tries++;
+        }
+        if (!fortune) throw new Error('network');
         setCurrentFortune(fortune);
         setFortuneHistory(prev => [fortune, ...prev.slice(0, 4)]);
         toast({ title: "فال جدید", description: "فال حافظ برای شما آماده شد" });

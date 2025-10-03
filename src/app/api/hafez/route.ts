@@ -1,6 +1,5 @@
-import { NextResponse } from 'next/server';
-import path from 'path';
-import { promises as fs } from 'fs';
+import { NextRequest, NextResponse } from 'next/server';
+import { readGhazalById, readRandomGhazal as readRandomFromLib } from '@/lib/hafez-reader';
 
 type HafezFortune = {
   id: number;
@@ -9,58 +8,29 @@ type HafezFortune = {
   meaning: string;
   interpretation: string;
 };
-
-function normalizeText(input: string): string {
-  return input
-    .replace(/\r\n|\r/g, '\n')
-    .split('\n')
-    .map((l) => l.trim())
-    .join('\n')
-    .replace(/\n{3,}/g, '\n\n');
-}
-
-async function readRandomGhazal(): Promise<HafezFortune | null> {
-  const dir = path.join(process.cwd(), 'hafez-fal.ir', 'content', 'ghazal');
-  let files: string[] = [];
-  try {
-    const entries = await fs.readdir(dir, { withFileTypes: true });
-    files = entries.filter((e) => e.isFile() && e.name.toLowerCase().endsWith('.md')).map((e) => e.name);
-  } catch {
-    return null;
-  }
-  if (!files.length) return null;
-
-  const pickIndex = Math.floor(Math.random() * files.length);
-  const filename = files[pickIndex];
-  const fullPath = path.join(dir, filename);
-  const raw = await fs.readFile(fullPath, 'utf8');
-
-  // Remove frontmatter if present
-  let content = raw;
-  if (content.startsWith('---')) {
-    const end = content.indexOf('\n---', 3);
-    if (end !== -1) content = content.slice(end + 4);
-  }
-  content = normalizeText(content);
-
-  // Extract first two non-empty lines as poem and continuation
-  const lines = content.split('\n').map((l) => l.trim()).filter((l) => l.length > 0);
-  const poem = lines[0] || '';
-  const continuation = lines[1] || '';
-
-  const fortune: HafezFortune = {
-    id: pickIndex + 1,
-    poem,
-    continuation,
+async function readRandomGhazal(specificId?: number): Promise<HafezFortune | null> {
+  const data = specificId ? await readGhazalById(specificId) : await readRandomFromLib();
+  if (!data) return null;
+  return {
+    id: data.id,
+    poem: data.poemFirst,
+    continuation: data.poemLast,
     meaning: '',
-    interpretation: content,
+    interpretation: data.interpretation,
   };
-  return fortune;
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const fortune = await readRandomGhazal();
+    const idParam = req.nextUrl.searchParams.get('id');
+    const id = idParam ? parseInt(idParam, 10) : undefined;
+    let fortune = await readRandomGhazal(id && Number.isFinite(id) ? id : undefined);
+    // Retry a few times in case of non-matching files
+    let attempts = 0;
+    while (!fortune && attempts < 5 && !id) {
+      fortune = await readRandomGhazal();
+      attempts++;
+    }
     if (!fortune) return NextResponse.json({ error: 'not_found' }, { status: 404 });
     return NextResponse.json(fortune, { status: 200, headers: { 'Cache-Control': 'no-store' } });
   } catch (e) {

@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
+import { Download, Bell } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -64,19 +64,47 @@ export default function PWAInstallPrompt() {
     setInstallPromptEvent(null);
   }, [installPromptEvent, toast]);
   
+  // Optional: show a welcome notification if Notification permission is granted
+  useEffect(() => {
+    if (!isClient) return;
+    if ('Notification' in window && Notification.permission === 'default') {
+      // Ask once per day
+      const key = 'notifPromptAt';
+      const last = localStorage.getItem(key);
+      const day = 24*60*60*1000;
+      if (!last || Date.now() - Number(last) > day) {
+        Notification.requestPermission().then((perm) => {
+          if (perm === 'granted') {
+            try { new Notification('تبریک! ✨', { body: 'از این پس اعلان‌های مفید را دریافت خواهید کرد.' }); } catch {}
+          }
+          localStorage.setItem(key, Date.now().toString());
+        });
+      }
+    }
+  }, [isClient]);
+  
   if (!isClient || !isVisible || !installPromptEvent) {
     return null;
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2">
       <Button
         onClick={handleInstallClick}
-        className="bg-primary hover:bg-primary/90 text-primary-foreground h-14 px-6 rounded-2xl shadow-lg animate-bounce"
+        className="bg-primary hover:bg-primary/90 text-primary-foreground h-12 px-5 rounded-xl shadow-lg"
       >
         <Download className="ml-2 h-5 w-5" />
-        <span>نصب اپلیکیشن</span>
+        <span>نصب اپ</span>
       </Button>
+      {('Notification' in window) && Notification.permission !== 'granted' && (
+        <Button
+          variant="secondary"
+          onClick={() => Notification.requestPermission()}
+          className="h-10 px-4 rounded-xl"
+        >
+          <Bell className="ml-2 h-4 w-4" /> فعال‌سازی اعلان
+        </Button>
+      )}
     </div>
   );
 }

@@ -50,7 +50,7 @@ export default function HafezFortune() {
   const copyFortune = async () => {
     if (!currentFortune) return;
     
-    const fortuneText = `${currentFortune.poem}\n${currentFortune.continuation}\n\nمعنی: ${currentFortune.meaning}\n\nتفسیر: ${currentFortune.interpretation}`;
+    const fortuneText = `${currentFortune.poem}\n${currentFortune.continuation}\n\nتفسیر: ${currentFortune.interpretation}`;
     
     try {
       await navigator.clipboard.writeText(fortuneText);
@@ -70,7 +70,7 @@ export default function HafezFortune() {
   const downloadFortune = () => {
     if (!currentFortune) return;
     
-    const fortuneText = `فال حافظ - ${new Date().toLocaleDateString('fa-IR')}\n\n${currentFortune.poem}\n${currentFortune.continuation}\n\nمعنی: ${currentFortune.meaning}\n\nتفسیر: ${currentFortune.interpretation}`;
+    const fortuneText = `فال حافظ - ${new Date().toLocaleDateString('fa-IR')}\n\n${currentFortune.poem}\n${currentFortune.continuation}\n\nتفسیر: ${currentFortune.interpretation}`;
     
     const blob = new Blob([fortuneText], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -146,19 +146,6 @@ export default function HafezFortune() {
                       {currentFortune.continuation}
                     </div>
                   </div>
-                </div>
-              </div>
-
-              {/* Meaning */}
-              <div className="p-6 rounded-2xl bg-gradient-to-r from-blue-500/15 to-cyan-500/15 border border-blue-500/30">
-                <div className="space-y-3">
-                  <h3 className="text-lg font-bold text-blue-300 flex items-center gap-2">
-                    <Heart className="w-5 h-5" />
-                    معنی شعر
-                  </h3>
-                  <p className="text-foreground leading-relaxed">
-                    {currentFortune.meaning}
-                  </p>
                 </div>
               </div>
 

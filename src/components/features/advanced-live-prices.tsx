@@ -8,12 +8,14 @@ import type { LivePrice, PriceData, PriceDataItem } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 
+const toFaDigits = (s: string) => s.replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]);
+
 const PriceChangeIndicator = ({ change }: { change: string | null }) => {
   if (!change || change === "0" || change === "۰") {
      const isZero = change === "0" || change === "۰";
      return (
-        <div className={cn("flex items-center text-xs font-mono", isZero ? "text-muted-foreground" : "text-green-500")}>
-            <span>{isZero ? "0" : change}</span>
+        <div className={cn("flex items-center text-xs font-display", isZero ? "text-muted-foreground" : "text-green-500")}>
+            <span>{isZero ? "۰" : toFaDigits(change)}</span>
         </div>
      )
   }
@@ -21,15 +23,23 @@ const PriceChangeIndicator = ({ change }: { change: string | null }) => {
   const isPositive = !change.startsWith('-');
   const isNegative = change.startsWith('-');
   
-  const displayChange = change.replace(/[+-]/, '');
+  const displayChange = toFaDigits(change.replace(/[+-]/, ''));
 
   return (
-    <div className={cn("flex items-center text-xs font-mono", isPositive ? "text-green-500" : isNegative ? "text-red-500" : "text-muted-foreground")}>
+    <div className={cn("flex items-center text-xs font-display", isPositive ? "text-green-500" : isNegative ? "text-red-500" : "text-muted-foreground")}>
       <span>{displayChange}</span>
       {isPositive && <ArrowUp className="w-3 h-3 ml-1" />}
       {isNegative && <ArrowDown className="w-3 h-3 ml-1" />}
     </div>
   );
+};
+
+const getUnitFromSymbol = (symbol?: string) => {
+  if (!symbol) return '';
+  const s = symbol.toUpperCase();
+  if (s === 'IRT' || s === 'IRR') return 'تومان';
+  if (s === 'USD') return 'دلار';
+  return symbol;
 };
 
 const PriceCard = ({ item }: { item: LivePrice }) => (
@@ -48,7 +58,12 @@ const PriceCard = ({ item }: { item: LivePrice }) => (
             </div>
         </div>
         <div className="mt-2 text-right">
-            <div className="text-lg text-foreground font-display font-bold text-glow">{item.price}</div>
+            <div className="flex items-baseline justify-end gap-2">
+              <div className="text-lg text-foreground font-display font-bold text-glow leading-none">{item.price}</div>
+              <span className="px-2 py-0.5 text-[10px] rounded-md bg-primary/10 text-primary border border-primary/20">
+                {getUnitFromSymbol(item.symbol)}
+              </span>
+            </div>
              <div className="flex justify-end mt-1 h-5">
                 <PriceChangeIndicator change={item.change} />
             </div>
@@ -57,6 +72,24 @@ const PriceCard = ({ item }: { item: LivePrice }) => (
 );
 
 type TGJUItem = { id?: string; title: string; price: string; change: string };
+
+const toFaNum = (val: number | string) => {
+  try {
+    const num = typeof val === 'number' ? val : Number(String(val).replace(/[^0-9.\-]/g, ''));
+    if (Number.isFinite(num)) return num.toLocaleString('fa-IR');
+    return String(val).replace(/[0-9]/g, d => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]);
+  } catch {
+    return String(val);
+  }
+};
+
+const getUnitFromTitle = (title: string): string => {
+  const t = title.replace(/\s+/g, '').toLowerCase();
+  // All in Toman except these exceptions
+  if (t.includes('انس')) return 'دلار';
+  if (t.includes('بورس')) return 'شاخص';
+  return 'تومان';
+};
 
 function getIconForTitle(title: string) {
   const t = title.replace(/\s+/g, '').toLowerCase();
@@ -74,6 +107,9 @@ function getIconForTitle(title: string) {
 
 const TGJUCard = ({ item }: { item: TGJUItem }) => {
   const { icon, bg } = getIconForTitle(item.title || '');
+  const unit = getUnitFromTitle(item.title || '');
+  // Normalize price to Persian digits with grouping
+  const formattedPrice = toFaNum(item.price);
   return (
     <div className="glass-effect rounded-2xl p-3 card-hover w-full flex-shrink-0">
       <div className="flex items-center gap-2">
@@ -82,11 +118,13 @@ const TGJUCard = ({ item }: { item: TGJUItem }) => {
         </div>
         <div className="flex-grow text-right">
           <h3 className="text-foreground font-display font-semibold text-sm truncate">{item.title}</h3>
-          <div className="text-muted-foreground text-[11px] font-body">TGJU</div>
         </div>
       </div>
       <div className="mt-2 text-right">
-        <div className="text-lg text-foreground font-display font-bold text-glow">{item.price}</div>
+        <div className="flex items-baseline justify-end gap-2">
+          <div className="text-lg text-foreground font-display font-bold text-glow leading-none">{formattedPrice}</div>
+          <span className="px-2 py-0.5 text-[10px] rounded-md bg-primary/10 text-primary border border-primary/20">{unit}</span>
+        </div>
         <div className="flex justify-end mt-1 h-5">
           <PriceChangeIndicator change={item.change || null} />
         </div>

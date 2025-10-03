@@ -34,12 +34,27 @@ const coinDetails: Record<string, { weight: number; karat: number }> = {
 
 const OUNCE_TO_GRAM = 31.1035;
 
-// Mock live prices - in a real app, this would come from an API
-const mockLivePrices = {
-    GoldOunce: 2320,
-    Dollar: DEFAULT_USD_RATE / 10,
-    EmamiCoin: 40800000,
-    // Add other coin prices if available
+// Helpers
+const parseNumeric = (text: string | number): number => {
+  const s = String(text || '').replace(/[^0-9.]/g, '');
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+};
+
+type LivePricesResponse = {
+  success: boolean;
+  data?: Record<string, { price: string; change: string | null }>;
+};
+
+const fetchLivePrices = async (): Promise<Record<string, { price: string; change: string | null }>> => {
+  try {
+    const res = await fetch('/api/live-prices', { cache: 'no-store' });
+    const json = (await res.json()) as LivePricesResponse;
+    if (!json.success || !json.data) return {};
+    return json.data;
+  } catch {
+    return {};
+  }
 };
 
 
@@ -60,11 +75,30 @@ export default function GoldCoinCalculator() {
   const [dollarPrice, setDollarPrice] = useState('');
   const [coinBubble, setCoinBubble] = useState<number | null>(null);
 
+  // Invoice-based workmanship (اجرت) calculator state
+  const [invWeight, setInvWeight] = useState('');
+  const [invGramPrice, setInvGramPrice] = useState('');
+  const [invTotalPaid, setInvTotalPaid] = useState('');
+  const [invTax, setInvTax] = useState('');
+  const [invProfit, setInvProfit] = useState('');
+  const [invWage, setInvWage] = useState<number | null>(null);
+
   // Set initial live prices on mount
   useEffect(() => {
-    setCoinMarketPrice(formatNumber(mockLivePrices.EmamiCoin));
-    setOuncePrice(formatNumber(mockLivePrices.GoldOunce));
-    setDollarPrice(formatNumber(mockLivePrices.Dollar));
+    (async () => {
+      const data = await fetchLivePrices();
+      const emami = parseNumeric(data?.EmamiCoin?.price);
+      const ounce = parseNumeric(data?.GoldOunce?.price);
+      const dollar = parseNumeric(data?.Dollar?.price);
+      const gold18 = parseNumeric(data?.Gold18K?.price);
+      if (emami > 0) setCoinMarketPrice(formatNumber(emami));
+      if (ounce > 0) setOuncePrice(formatNumber(ounce));
+      else setOuncePrice(formatNumber(2320));
+      if (dollar > 0) setDollarPrice(formatNumber(dollar));
+      else setDollarPrice(formatNumber(DEFAULT_USD_RATE / 10));
+      // Pre-fill "قیمت هر گرم طلا" from بازار طلا ۱۸
+      if (gold18 > 0) setGoldPricePerGram(formatNumber(gold18));
+    })();
   }, []);
 
   const handleCalculateGoldPrice = () => {
@@ -129,6 +163,30 @@ export default function GoldCoinCalculator() {
     </div>
   );
 
+  const handleCalculateInvoiceWage = () => {
+    const w = unformatNumber(invWeight);
+    const gram = unformatNumber(invGramPrice);
+    const total = unformatNumber(invTotalPaid);
+    const tax = unformatNumber(invTax) || 0;
+    const profit = unformatNumber(invProfit) || 0;
+    if (isNaN(w) || isNaN(gram) || isNaN(total) || w <= 0 || gram <= 0 || total <= 0) {
+      setInvWage(null);
+      return;
+    }
+    const rawGold = w * gram;
+    const wage = total - rawGold - tax - profit;
+    setInvWage(wage);
+  };
+
+  const handleResetInvoiceWage = () => {
+    setInvWeight('');
+    setInvGramPrice('');
+    setInvTotalPaid('');
+    setInvTax('');
+    setInvProfit('');
+    setInvWage(null);
+  };
+
   const LivePriceInput = ({ icon, title, value, onValueChange, onRefresh, placeholder, unit }: {
     icon: React.ReactNode,
     title: string,
@@ -157,9 +215,10 @@ export default function GoldCoinCalculator() {
 
   return (
     <Tabs defaultValue="gold-price" className="w-full pt-6">
-      <TabsList className="grid w-full grid-cols-2">
+      <TabsList className="grid w-full grid-cols-2 md:grid-cols-3">
         <TabsTrigger value="gold-price">محاسبه قیمت طلا</TabsTrigger>
         <TabsTrigger value="coin-bubble">محاسبه حباب سکه</TabsTrigger>
+        <TabsTrigger value="invoice-wage">محاسبه اجرت از فاکتور</TabsTrigger>
       </TabsList>
       
       {/* Gold Price Calculator Tab */}
@@ -242,7 +301,11 @@ export default function GoldCoinCalculator() {
               title="قیمت روز سکه"
               value={coinMarketPrice}
               onValueChange={setCoinMarketPrice}
-              onRefresh={() => setCoinMarketPrice(formatNumber(mockLivePrices.EmamiCoin))}
+              onRefresh={async () => {
+                const data = await fetchLivePrices();
+                const emami = parseNumeric(data?.EmamiCoin?.price);
+                if (emami > 0) setCoinMarketPrice(formatNumber(emami));
+              }}
               placeholder="۴۰,۸۰۰,۰۰۰"
               unit="تومان"
             />
@@ -251,7 +314,11 @@ export default function GoldCoinCalculator() {
               title="قیمت انس جهانی طلا"
               value={ouncePrice}
               onValueChange={setOuncePrice}
-              onRefresh={() => setOuncePrice(formatNumber(mockLivePrices.GoldOunce))}
+              onRefresh={async () => {
+                const data = await fetchLivePrices();
+                const ounce = parseNumeric(data?.GoldOunce?.price);
+                if (ounce > 0) setOuncePrice(formatNumber(ounce));
+              }}
               placeholder="۲,۳۲۰"
               unit="دلار"
             />
@@ -260,7 +327,11 @@ export default function GoldCoinCalculator() {
               title="قیمت دلار"
               value={dollarPrice}
               onValueChange={setDollarPrice}
-              onRefresh={() => setDollarPrice(formatNumber(mockLivePrices.Dollar))}
+              onRefresh={async () => {
+                const data = await fetchLivePrices();
+                const dollar = parseNumeric(data?.Dollar?.price);
+                if (dollar > 0) setDollarPrice(formatNumber(dollar));
+              }}
               placeholder="۵۹,۵۰۰"
               unit="تومان"
             />
@@ -280,6 +351,55 @@ export default function GoldCoinCalculator() {
                 <span className="text-lg font-normal"> تومان</span>
               </AlertDescription>
             </Alert>
+        )}
+      </TabsContent>
+
+      {/* Invoice Wage Calculator Tab */}
+      <TabsContent value="invoice-wage" className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FancyInput icon={<Weight className="w-5 h-5"/>} title="وزن طلا (گرم)">
+            <div className="flex items-baseline gap-2">
+              <Input type="text" value={formatNumber(invWeight)} onChange={(e)=>setInvWeight(e.target.value.replace(/[^0-9,.]/g,''))} placeholder="۵" dir="ltr" className="h-9 text-base font-display border-0 bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0"/>
+              <span className="text-sm text-muted-foreground">گرم</span>
+            </div>
+          </FancyInput>
+          <FancyInput icon={<Banknote className="w-5 h-5"/>} title="قیمت هر گرم طلا (زمان خرید)">
+            <div className="flex items-baseline gap-2">
+              <Input type="text" value={formatNumber(invGramPrice)} onChange={(e)=>setInvGramPrice(e.target.value.replace(/[^0-9,]/g,''))} placeholder="۳,۰۰۰,۰۰۰" dir="ltr" className="h-9 text-base font-display border-0 bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0"/>
+              <span className="text-sm text-muted-foreground">تومان</span>
+            </div>
+          </FancyInput>
+          <FancyInput icon={<Calculator className="w-5 h-5"/>} title="قیمت کل پرداختی">
+            <div className="flex items-baseline gap-2">
+              <Input type="text" value={formatNumber(invTotalPaid)} onChange={(e)=>setInvTotalPaid(e.target.value.replace(/[^0-9,]/g,''))} placeholder="۱۷,۵۰۰,۰۰۰" dir="ltr" className="h-9 text-base font-display border-0 bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0"/>
+              <span className="text-sm text-muted-foreground">تومان</span>
+            </div>
+          </FancyInput>
+          <FancyInput icon={<Percent className="w-5 h-5"/>} title="مالیات و سود (اختیاری)">
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-baseline gap-2">
+                <Input type="text" value={formatNumber(invTax)} onChange={(e)=>setInvTax(e.target.value.replace(/[^0-9,]/g,''))} placeholder="۰" dir="ltr" className="h-9 text-base font-display border-0 bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0"/>
+                <span className="text-sm text-muted-foreground">مالیات (تومان)</span>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <Input type="text" value={formatNumber(invProfit)} onChange={(e)=>setInvProfit(e.target.value.replace(/[^0-9,]/g,''))} placeholder="۰" dir="ltr" className="h-9 text-base font-display border-0 bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0"/>
+                <span className="text-sm text-muted-foreground">سود (تومان)</span>
+              </div>
+            </div>
+          </FancyInput>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button onClick={handleResetInvoiceWage} variant="outline" className="w-full h-12"><RefreshCw className="ml-2 w-4 h-4"/> پاک کردن فرم</Button>
+          <Button onClick={handleCalculateInvoiceWage} className="w-full h-12"><Calculator className="ml-2 w-4 h-4"/> محاسبه اجرت</Button>
+        </div>
+        {invWage !== null && (
+          <Alert className="bg-blue-500/10 border-blue-500/20 text-center">
+            <AlertTitle className="text-blue-700 dark:text-blue-400 text-lg">اجرت ساخت</AlertTitle>
+            <AlertDescription className="font-display text-4xl font-bold text-primary mt-2">
+              {formatNumber(Math.round(invWage))}
+              <span className="text-lg font-normal"> تومان</span>
+            </AlertDescription>
+          </Alert>
         )}
       </TabsContent>
     </Tabs>

@@ -98,28 +98,28 @@ export default function QuotesRotator({ effect = 'flip3d', mode = 'random' }: { 
           <div className="text-[11px] md:text-xs font-semibold text-yellow-200/90 tracking-wider mb-1">✨ سخن بزرگان ✨</div>
           <div className={
             effect === 'flip3d'
-              ? "text-[15px] md:text-xl leading-8 text-foreground animate-in fade-in font-display font-semibold [text-shadow:0_0_20px_rgba(234,179,8,0.12)]"
+              ? "text-[15px] md:text-[22px] leading-8 md:leading-9 text-foreground animate-in fade-in font-display font-semibold [text-shadow:0_0_24px_rgba(234,179,8,0.16)]"
               : effect === 'parallax'
-              ? "text-[15px] md:text-xl leading-8 text-foreground animate-in fade-in [transform:translateY(4px)] font-display font-semibold"
-              : "text-[15px] md:text-xl leading-8 text-foreground animate-in fade-in slide-in-from-bottom-1 font-display font-semibold"
+              ? "text-[15px] md:text-[22px] leading-8 md:leading-9 text-foreground animate-in fade-in [transform:translateY(4px)] font-display font-semibold"
+              : "text-[15px] md:text-[22px] leading-8 md:leading-9 text-foreground animate-in fade-in slide-in-from-bottom-1 font-display font-semibold"
           }>
-            <span className="text-yellow-400/70 align-middle">“</span>
+            <span className="text-yellow-400/80 align-middle">“</span>
             {getDisplayText(current.text || '')}
-            <span className="text-yellow-400/70 align-middle">”</span>
+            <span className="text-yellow-400/80 align-middle">”</span>
           </div>
           {shouldShowExpandButton && (
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="mt-2 text-xs text-yellow-300/80 hover:text-yellow-200 transition-colors duration-200 underline"
+              className="mt-2 text-xs text-yellow-300/90 hover:text-yellow-200 transition-colors duration-200 underline"
             >
               {isExpanded ? 'کمتر' : 'مشاهده کامل'}
             </button>
           )}
           <div className="mt-3 flex items-center gap-3">
-            <div className="w-6 h-6 rounded-full bg-yellow-500/20 border border-yellow-400/30 text-[10px] text-yellow-100 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full bg-yellow-500/25 border border-yellow-400/30 text-[11px] text-yellow-100 flex items-center justify-center">
               {(current.author || 'ح').slice(0, 1)}
             </div>
-            <div className="text-xs md:text-sm text-yellow-300/90 font-semibold">— {current.author || 'حکیم'}</div>
+            <div className="text-xs md:text-sm text-yellow-200 font-semibold">— {current.author || 'حکیم'}</div>
           </div>
         </div>
       </div>

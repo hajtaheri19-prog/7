@@ -214,6 +214,12 @@ const toolCategories: ToolCategory[] = [
       { id: 'guess-the-number', title: 'حدس عدد', icon: <Hash className="h-8 w-8 text-fuchsia-400" />, component: GuessTheNumber, mode: 'مقابل سیستم' },
       { id: 'memory-game', title: 'بازی حافظه', icon: <BrainCircuit className="h-8 w-8 text-sky-400" />, component: MemoryGame, mode: 'تک نفره' },
       { id: '2048', title: 'بازی 2048', icon: <RectangleEllipsis className="h-8 w-8 text-indigo-400" />, component: Game2048, mode: 'تک نفره' },
+    ]
+  },
+  {
+    title: 'فال و طالع‌بینی',
+    icon: <Gem className="h-6 w-6 text-primary-foreground" />,
+    tools: [
       { id: 'hafez-fortune', title: 'فال حافظ', icon: <Gem className="h-8 w-8 text-yellow-500" />, component: HafezFortune },
     ]
   },

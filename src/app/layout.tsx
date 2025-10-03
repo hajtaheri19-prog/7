@@ -4,6 +4,8 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
 import NetworkStatusDetector from '@/components/layout/network-status-detector';
+import PWAInstallPrompt from '@/components/layout/pwa-install-prompt';
+import SplashScreen from '@/components/layout/splash-screen';
 
 const APP_NAME = "تبدیلا";
 const APP_DEFAULT_TITLE = "تبدیلا | دستیار هوشمند ابزارهای آنلاین";
@@ -107,9 +109,11 @@ export default function RootLayout({
             disableTransitionOnChange
         >
             <div className="gradient-bg antialiased">
+                <SplashScreen />
                 {children}
                 <Toaster />
                 <NetworkStatusDetector />
+                <PWAInstallPrompt />
             </div>
         </ThemeProvider>
       </body>

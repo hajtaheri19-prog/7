@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import Header from '@/components/layout/header';
 
 // Duplicate lightweight category registry from homepage to avoid importing big components
-import { BrainCircuit, FlaskConical, CalendarClock, Wallet, Gamepad2, User, ArrowLeft } from 'lucide-react';
+import { BrainCircuit, FlaskConical, CalendarClock, Wallet, Gamepad2, User, ArrowLeft, Heart } from 'lucide-react';
 
 type Tool = { id: string; title: string; icon: React.ReactNode; isWip?: boolean; isExternal?: boolean; href?: string };
 type ToolCategory = { title: string; icon: React.ReactNode; tools: Tool[] };
@@ -90,6 +90,9 @@ const registry: ToolCategory[] = [
     { id: 'utm-builder', title: 'سازنده لینک UTM', icon: <span /> },
     { id: 'whatsapp-link', title: 'سازنده لینک واتساپ', icon: <span /> },
     { id: 'lorem-ipsum', title: 'تولید متن لورم ایپسوم', icon: <span /> },
+  ]},
+  { title: 'فال و طالع‌بینی', icon: <Heart className="h-6 w-6 text-primary-foreground" />, tools: [
+    { id: 'hafez-fortune', title: 'فال حافظ', icon: <span /> },
   ]},
 ];
 

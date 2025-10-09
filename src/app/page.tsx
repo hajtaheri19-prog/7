@@ -174,6 +174,7 @@ const toolCategories: ToolCategory[] = [
     icon: <Wallet className="h-6 w-6 text-primary-foreground" />,
     tools: [
       { id: 'gpa-calculator', title: 'معدل‌سنج هوشمند', icon: <Calculator className="h-8 w-8 text-amber-400" />, component: GpaCalculator },
+      { id: 'market-rates', title: 'نرخ بازار (لحظه‌ای)', icon: <CandlestickChart className="h-8 w-8 text-emerald-400" /> },
       { id: 'crypto-converter', title: 'نرخ لحظه‌ای ارز دیجیتال', icon: <Bitcoin className="h-8 w-8 text-orange-400" />, component: CryptoConverter },
       { id: 'loan-calculator', title: 'محاسبه اقساط وام', icon: <Banknote className="h-8 w-8 text-rose-400" />, component: LoanCalculator },
       { id: 'deposit-calculator', title: 'محاسبه سود سپرده', icon: <PiggyBank className="h-8 w-8 text-emerald-400" />, component: DepositCalculator },

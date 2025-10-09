@@ -3,10 +3,12 @@
 import React, { useState } from 'react';
 import Header from '@/components/layout/header';
 import { Button } from '@/components/ui/button';
-import { MessageSquareHeart, Send, CheckCircle, Mail, User, MessageSquare } from 'lucide-react';
+import { MessageSquareHeart, Send, CheckCircle, Mail, User, MessageSquare, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 export default function FeedbackPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -48,19 +50,29 @@ export default function FeedbackPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="glass-effect rounded-3xl p-8 md:p-12 bg-gradient-to-br from-black/40 via-zinc-900/40 to-black/30 border border-pink-500/20 shadow-[0_0_40px_#ec489922] relative overflow-hidden"
+            className="glass-effect rounded-3xl p-8 md:p-12 bg-gradient-to-br from-white/70 via-white/60 to-white/70 dark:from-black/40 dark:via-zinc-900/40 dark:to-black/30 border border-pink-500/20 shadow-[0_0_40px_#ec489922] relative overflow-hidden"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-pink-500/5 via-transparent to-rose-500/5 animate-pulse" />
+            <div className="absolute inset-0 bg-gradient-to-r from-pink-500/10 via-transparent to-rose-500/10 animate-pulse" />
             
             <div className="relative z-10">
+              <div className="mb-6">
+                <Button
+                  variant="ghost"
+                  className="gap-2 text-foreground/90"
+                  onClick={() => router.back()}
+                >
+                  <ArrowRight className="w-4 h-4" />
+                  بازگشت
+                </Button>
+              </div>
               <div className="flex items-center gap-4 mb-8 text-center justify-center">
                 <motion.div 
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                  className="w-16 h-16 rounded-3xl bg-gradient-to-br from-pink-500/50 to-rose-500/30 shadow-[0_0_25px_#ec489966] flex items-center justify-center border border-pink-400/30"
+                  className="w-16 h-16 rounded-3xl bg-gradient-to-br from-pink-500/40 to-rose-500/25 shadow-[0_0_25px_#ec489966] flex items-center justify-center border border-pink-400/30"
                 >
-                  <MessageSquareHeart className="w-8 h-8 text-pink-200 drop-shadow-lg" />
+                  <MessageSquareHeart className="w-8 h-8 text-pink-700 dark:text-pink-200 drop-shadow-lg" />
                 </motion.div>
                 <motion.h1 
                   initial={{ opacity: 0, x: -20 }}
@@ -97,7 +109,7 @@ export default function FeedbackPage() {
                       transition={{ delay: 0.5 }}
                       className="relative"
                     >
-                      <label className="flex text-sm font-medium text-pink-200 mb-2 items-center gap-2">
+                      <label className="flex text-sm font-medium text-pink-700 dark:text-pink-200 mb-2 items-center gap-2">
                         <User className="w-4 h-4" />
                         نام شما
                       </label>
@@ -107,7 +119,7 @@ export default function FeedbackPage() {
                         value={formData.name}
                         onChange={handleChange}
                         required
-                        className="w-full p-4 bg-black/30 border border-pink-500/30 rounded-2xl text-foreground placeholder-foreground/50 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-pink-500/50 transition-all duration-300 backdrop-blur-sm"
+                        className="w-full p-4 bg-white/60 dark:bg-black/30 border border-pink-500/30 rounded-2xl text-foreground placeholder-foreground/50 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-pink-500/50 transition-all duration-300 backdrop-blur-sm"
                         placeholder="نام و نام خانوادگی خود را وارد کنید"
                       />
                     </motion.div>
@@ -118,7 +130,7 @@ export default function FeedbackPage() {
                       transition={{ delay: 0.6 }}
                       className="relative"
                     >
-                      <label className="flex text-sm font-medium text-pink-200 mb-2 items-center gap-2">
+                      <label className="flex text-sm font-medium text-pink-700 dark:text-pink-200 mb-2 items-center gap-2">
                         <Mail className="w-4 h-4" />
                         ایمیل شما
                       </label>
@@ -128,7 +140,7 @@ export default function FeedbackPage() {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="w-full p-4 bg-black/30 border border-pink-500/30 rounded-2xl text-foreground placeholder-foreground/50 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-pink-500/50 transition-all duration-300 backdrop-blur-sm"
+                        className="w-full p-4 bg-white/60 dark:bg黑/30 border border-pink-500/30 rounded-2xl text-foreground placeholder-foreground/50 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-pink-500/50 transition-all duration-300 backdrop-blur-sm"
                         placeholder="example@email.com"
                       />
                     </motion.div>
@@ -139,7 +151,7 @@ export default function FeedbackPage() {
                       transition={{ delay: 0.7 }}
                       className="relative"
                     >
-                      <label className="flex text-sm font-medium text-pink-200 mb-2 items-center gap-2">
+                      <label className="flex text-sm font-medium text-pink-700 dark:text-pink-200 mb-2 items-center gap-2">
                         <MessageSquare className="w-4 h-4" />
                         پیام شما
                       </label>
@@ -149,7 +161,7 @@ export default function FeedbackPage() {
                         onChange={handleChange}
                         required
                         rows={6}
-                        className="w-full p-4 bg-black/30 border border-pink-500/30 rounded-2xl text-foreground placeholder-foreground/50 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-pink-500/50 transition-all duration-300 backdrop-blur-sm resize-none"
+                        className="w-full p-4 bg-white/60 dark:bg-black/30 border border-pink-500/30 rounded-2xl text-foreground placeholder-foreground/50 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-pink-500/50 transition-all duration-300 backdrop-blur-sm resize-none"
                         placeholder="نظرات، پیشنهادات یا انتقادات خود را با ما در میان بگذارید..."
                       />
                     </motion.div>

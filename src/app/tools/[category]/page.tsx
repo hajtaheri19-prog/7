@@ -45,6 +45,7 @@ const registry: ToolCategory[] = [
   ]},
   { title: 'محاسبات عمومی و مالی', icon: <Wallet className="h-6 w-6 text-primary-foreground" />, tools: [
     { id: 'gpa-calculator', title: 'معدل‌سنج هوشمند', icon: <span /> },
+    { id: 'market-rates', title: 'نرخ بازار (لحظه‌ای)', icon: <span /> },
     { id: 'crypto-converter', title: 'نرخ لحظه‌ای ارز دیجیتال', icon: <span /> },
     { id: 'loan-calculator', title: 'محاسبه اقساط وام', icon: <span /> },
     { id: 'deposit-calculator', title: 'محاسبه سود سپرده', icon: <span /> },

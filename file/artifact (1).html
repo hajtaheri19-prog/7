@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>📊 قیمت لحظه‌ای بازار VIP</title>
+<style>
+body {
+  background: radial-gradient(circle at top left,#000,#111);
+  color: gold;
+  font-family: 'Vazir', sans-serif;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+.container {
+  backdrop-filter: blur(15px);
+  background: rgba(255,215,0,0.05);
+  border-radius: 15px;
+  border: 1px solid gold;
+  padding: 15px;
+  margin: 20px auto;
+  max-width: 900px;
+}
+h1 {
+  font-size: 2rem;
+  color: #FFD700;
+  text-shadow: 0 0 10px gold;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid rgba(255,215,0,0.3);
+}
+th { color: #FFD700; }
+.error {
+  color: red;
+  font-weight: bold;
+  margin-top: 5px;
+}
+pre {
+  text-align: left;
+  direction: ltr;
+  background: rgba(0,0,0,0.5);
+  padding: 10px;
+  border-radius: 8px;
+  color: lime;
+  overflow-x: auto;
+  font-size: 0.85rem;
+}
+@media(max-width:600px){
+  td, th { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<h1>📊 قیمت لحظه‌ای بازار</h1>
+<div id="prices" class="container">در حال بارگذاری...</div>
+<div class="container">
+  <h2>📄 خروجی JSON</h2>
+  <pre id="jsonOutput">[]</pre>
+</div>
+<div id="errorBox" class="error"></div>
+
+<script>
+const SOURCES = [
+  "https://api.allorigins.win/raw?url=" + encodeURIComponent("https://www.iranjib.ir/showgroup/23/realtime_price/"),
+  "https://thingproxy.freeboard.io/fetch/" + encodeURIComponent("https://www.iranjib.ir/showgroup/23/realtime_price/")
+];
+
+// گرفتن HTML از منابع با fallback
+async function fetchHTML() {
+  for (let src of SOURCES) {
+    try {
+      const res = await fetch(src, { cache: "no-store" });
+      if (!res.ok) throw new Error(res.status);
+      const text = await res.text();
+      if (text.length < 500) throw new Error("Empty or invalid HTML");
+      document.getElementById("errorBox").textContent = "";
+      return text;
+    } catch (e) {
+      console.warn("Source failed:", src, e);
+      document.getElementById("errorBox").textContent = "⚠️ اتصال به منبع " + src + " ناموفق بود. تلاش مجدد...";
+    }
+  }
+  throw new Error("تمام منابع پاسخگو نیستند");
+}
+
+// پردازش داده‌ها از HTML ایران‌جیب
+function parsePrices(html) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const rows = doc.querySelectorAll("table.items_table tr:not(.header):not(.catsection)");
+  let data = [];
+  rows.forEach(row=>{
+    const cols = row.querySelectorAll("td");
+    if(cols.length >= 3){
+      const name = cols[0].textContent.trim();
+      const price = cols[1].textContent.trim();
+      const change = cols[2].textContent.trim();
+      if(name && price) data.push({ name, price, change });
+    }
+  });
+  return data;
+}
+
+// رندر جدول
+function renderTable(data){
+  let html = "<table><tr><th>آیتم</th><th>قیمت</th><th>تغییر</th></tr>";
+  data.forEach(item=>{
+    html += `<tr>
+      <td>${item.name}</td>
+      <td>${item.price}</td>
+      <td>${item.change}</td>
+    </tr>`;
+  });
+  html += "</table>";
+  document.getElementById("prices").innerHTML = html;
+  document.getElementById("jsonOutput").textContent = JSON.stringify(data, null, 2);
+}
+
+// اجرای اصلی
+async function loadPrices() {
+  try {
+    const html = await fetchHTML();
+    const data = parsePrices(html);
+    renderTable(data);
+  } catch (err) {
+    document.getElementById("errorBox").textContent = "❌ خطا: " + err.message;
+  }
+}
+
+// اجرای اولیه و آپدیت هر دقیقه
+loadPrices();
+setInterval(loadPrices, 60000);
+</script>
+
+</body>
+</html>

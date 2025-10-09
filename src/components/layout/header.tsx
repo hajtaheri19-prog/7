@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useEffect, useState } from 'react';
-import { Clock } from 'lucide-react';
+import { Clock, Download } from 'lucide-react';
 import { useIsMobile } from "@/hooks/use-mobile";
 
 
@@ -77,7 +77,15 @@ export default function Header() {
             <div className="sm:flex">
               <LiveClock />
             </div>
-            
+            <button
+              onClick={() => {
+                try { window.dispatchEvent(new Event('pwa:showInstall')); } catch {}
+              }}
+              className="hidden sm:inline-flex items-center gap-1 h-9 px-3 rounded-lg border bg-white/70 dark:bg-black/30 text-foreground hover:bg-white/90 transition"
+              title="نصب تبدیلا"
+            >
+              <Download className="w-4 h-4" /> نصب
+            </button>
             <ThemeToggle />
         </div>
       </div>

@@ -84,46 +84,50 @@ export default function QuotesRotator({ effect = 'flip3d', mode = 'random' }: { 
   if (!mounted || !current) return null;
 
   return (
-    <Card className="relative overflow-hidden rounded-3xl border border-yellow-500/30 bg-gradient-to-br from-zinc-900/80 via-black/70 to-zinc-900/80 shadow-[0_0_35px_#eab30822] backdrop-blur-xl">
+    <Card className="relative overflow-hidden rounded-2xl md:rounded-3xl border border-yellow-500/30 bg-gradient-to-br from-white/90 via-white/80 to-white/90 dark:from-zinc-900/80 dark:via-black/70 dark:to-zinc-900/80 shadow-[0_10px_40px_rgba(0,0,0,0.15)] backdrop-blur-xl max-w-xl md:max-w-3xl mx-auto">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -inset-20 bg-[radial-gradient(circle_at_top_left,rgba(234,179,8,0.12),transparent_50%)]" />
-        <div className="absolute -inset-20 bg-[radial-gradient(circle_at_bottom_right,rgba(250,204,21,0.08),transparent_50%)]" />
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent" />
+        <div className="absolute -inset-24 bg-[radial-gradient(50%_50%_at_20%_20%,rgba(234,179,8,0.15),transparent_60%),radial-gradient(40%_40%_at_80%_80%,rgba(250,204,21,0.12),transparent_60%)]" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-yellow-500/20 to-transparent" />
       </div>
-      <div className="relative p-4 md:p-5 flex items-start gap-4">
-        <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl border border-yellow-400/40 bg-gradient-to-br from-yellow-500/40 to-yellow-300/20 shadow-[0_0_25px_#eab30855] flex items-center justify-center shrink-0 backdrop-blur-sm">
-          <Quote className="w-5 h-5 md:w-6 md:h-6 text-yellow-100" />
+      <div className="relative p-4 md:p-5 flex items-start gap-3 md:gap-5">
+        <div className="w-9 h-9 md:w-11 md:h-11 rounded-2xl border border-yellow-400/50 bg-gradient-to-br from-yellow-500/40 to-yellow-300/20 shadow-[0_8px_25px_rgba(234,179,8,0.25)] flex items-center justify-center shrink-0 backdrop-blur-sm">
+          <Quote className="w-5 h-5 md:w-6 md:h-6 text-yellow-700 dark:text-yellow-100" />
         </div>
         <div className="flex-1">
-          <div className="text-[10px] md:text-xs font-semibold text-yellow-200/90 tracking-wider mb-1">✨ سخن بزرگان ✨</div>
+          <div className="mb-2 flex items-center gap-2">
+            <span className="text-[10px] md:text-xs font-bold tracking-wider text-yellow-700/90 dark:text-yellow-200/90">✨ سخن بزرگان ✨</span>
+            <span className="inline-block h-3 w-px bg-yellow-500/40" />
+            <span className="text-[10px] md:text-xs text-muted-foreground">روزانه الهام‌بخش</span>
+          </div>
           <div className={
             effect === 'flip3d'
-              ? "text-[14px] md:text-[18px] leading-7 md:leading-8 text-foreground animate-in fade-in font-display font-semibold [text-shadow:0_0_18px_rgba(234,179,8,0.14)]"
+              ? "text-[13px] md:text-[18px] leading-6 md:leading-8 text-foreground animate-in fade-in font-display font-semibold [text-shadow:0_0_16px_rgba(234,179,8,0.12)]"
               : effect === 'parallax'
-              ? "text-[14px] md:text-[18px] leading-7 md:leading-8 text-foreground animate-in fade-in [transform:translateY(4px)] font-display font-semibold"
-              : "text-[14px] md:text-[18px] leading-7 md:leading-8 text-foreground animate-in fade-in slide-in-from-bottom-1 font-display font-semibold"
+              ? "text-[13px] md:text-[18px] leading-6 md:leading-8 text-foreground animate-in fade-in [transform:translateY(3px)] font-display font-semibold"
+              : "text-[13px] md:text-[18px] leading-6 md:leading-8 text-foreground animate-in fade-in slide-in-from-bottom-1 font-display font-semibold"
           }>
-            <span className="text-yellow-400/80 align-middle">“</span>
+            <span className="text-yellow-600/90 dark:text-yellow-400/80 align-middle">“</span>
             {getDisplayText(current.text || '')}
-            <span className="text-yellow-400/80 align-middle">”</span>
+            <span className="text-yellow-600/90 dark:text-yellow-400/80 align-middle">”</span>
           </div>
-          {shouldShowExpandButton && (
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="mt-2 text-xs text-yellow-300/90 hover:text-yellow-200 transition-colors duration-200 underline"
-            >
-              {isExpanded ? 'کمتر' : 'مشاهده کامل'}
-            </button>
-          )}
-          <div className="mt-2 flex items-center gap-3">
-            <div className="w-6 h-6 rounded-full bg-yellow-500/25 border border-yellow-400/30 text-[10px] text-yellow-100 flex items-center justify-center">
+          <div className="mt-2 flex items-center gap-2">
+            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-500/25 to-yellow-300/15 border border-yellow-400/40 text-[10px] text-yellow-800 dark:text-yellow-100 flex items-center justify-center shadow-[0_2px_8px_rgba(234,179,8,0.25)]">
               {(current.author || 'ح').slice(0, 1)}
             </div>
-            <div className="text-[11px] md:text-xs text-yellow-200 font-semibold">— {current.author || 'حکیم'}</div>
+            <div className="text-[10px] md:text-xs text-yellow-700 dark:text-yellow-200 font-bold">— {current.author || 'حکیم'}</div>
+            {shouldShowExpandButton && (
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="ml-auto inline-flex items-center px-2.5 py-1 text-[10px] rounded-lg border border-yellow-400/40 bg-yellow-500/10 text-yellow-700 dark:text-yellow-200 hover:bg-yellow-500/20 transition"
+              >
+                {isExpanded ? 'کمتر' : 'مشاهده کامل'}
+              </button>
+            )}
           </div>
         </div>
       </div>
-      <div className="absolute inset-x-8 bottom-2 h-px bg-gradient-to-r from-transparent via-yellow-500/20 to-transparent" />
+      <div className="absolute inset-x-8 bottom-2 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent" />
     </Card>
   );
 }

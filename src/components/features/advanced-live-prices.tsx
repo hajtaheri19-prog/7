@@ -15,18 +15,18 @@ const PriceChangeIndicator = ({ change }: { change: string | null }) => {
      const isZero = change === "0" || change === "۰";
      return (
         <div className={cn("flex items-center text-xs font-display", isZero ? "text-muted-foreground" : "text-green-500")}>
-            <span>{isZero ? "۰" : toFaDigits(change)}</span>
+            <span>{isZero ? "۰" : toFaDigits(change || "0")}</span>
         </div>
      )
   }
 
-  const isPositive = !change.startsWith('-');
-  const isNegative = change.startsWith('-');
+  const isPositive = !!change && !change.startsWith('-');
+  const isNegative = !!change && change.startsWith('-');
   
-  const displayChange = toFaDigits(change.replace(/[+-]/, ''));
+  const displayChange = toFaDigits((change || '').replace(/[+-]/, ''));
 
   return (
-    <div className={cn("flex items-center text-xs font-display", isPositive ? "text-green-500" : isNegative ? "text-red-500" : "text-muted-foreground")}>
+    <div className={cn("flex items-center text-xs font-display digits-fancy", isPositive ? "text-green-500" : isNegative ? "text-red-500" : "text-muted-foreground")}> 
       <span>{displayChange}</span>
       {isPositive && <ArrowUp className="w-3 h-3 ml-1" />}
       {isNegative && <ArrowDown className="w-3 h-3 ml-1" />}
@@ -37,7 +37,7 @@ const PriceChangeIndicator = ({ change }: { change: string | null }) => {
 const getUnitFromSymbol = (symbol?: string) => {
   if (!symbol) return '';
   const s = symbol.toUpperCase();
-  if (s === 'IRT' || s === 'IRR') return 'تومان';
+  if (s === 'IRT' || s === 'IRR') return 'ریال';
   if (s === 'USD') return 'دلار';
   return symbol;
 };
@@ -84,25 +84,35 @@ const toFaNum = (val: number | string) => {
 };
 
 const getUnitFromTitle = (title: string): string => {
-  const t = title.replace(/\s+/g, '').toLowerCase();
-  // All in Toman except these exceptions
-  if (t.includes('انس')) return 'دلار';
-  if (t.includes('بورس')) return 'شاخص';
-  return 'تومان';
+  const raw = title || '';
+  const t = raw.replace(/\s+/g, '').toLowerCase();
+  // Indices
+  if (t.includes('شاخص') || t.includes('بورس')) return 'شاخص';
+  // USD-based
+  if (t.includes('بیتکوین') || t.includes('bitcoin') || t.includes('btc')) return 'دلار';
+  if (t.includes('نفت') || t.includes('برنت') || t.includes('brent') || t.includes('oil')) return 'دلار';
+  if (t.includes('انس') || t.includes('ounce')) return 'دلار';
+  // Rial-based
+  if (t === 'دلار' || t === 'usd' || /(^|\W)دلار($|\W)/.test(raw)) return 'ریال';
+  if (t.includes('تتر') || t.includes('usdt') || t.includes('tether')) return 'ریال';
+  if (t.includes('سکه')) return 'ریال';
+  if (t.includes('گرم18') || t.includes('طلا18') || t.includes('طلا۱۸') || t.includes('gold18')) return 'ریال';
+  // Default to Rial for domestic market items
+  return 'ریال';
 };
 
 function getIconForTitle(title: string) {
   const t = title.replace(/\s+/g, '').toLowerCase();
-  // Persian keywords
-  if (t.includes('انس') || t.includes('طلا') || t.includes('mesghal') || t.includes('mesqal')) return { icon: <Gem className="w-5 h-5 text-yellow-300" />, bg: 'from-yellow-500/40 to-amber-400/30' };
-  if (t.includes('مثقال') || t.includes('گرم18') || t.includes('طلا 18 عیار')) return { icon: <Gem className="w-5 h-5 text-yellow-300" />, bg: 'from-yellow-500/40 to-amber-400/30' };
-  if (t.includes('سکه')) return { icon: <Coins className="w-5 h-5 text-amber-200" />, bg: 'from-amber-500/40 to-yellow-400/30' };
-  if (t.includes('دلار') || t.includes('usd')) return { icon: <Banknote className="w-5 h-5 text-emerald-200" />, bg: 'from-emerald-500/40 to-teal-400/30' };
-  if (t.includes('تتر') || t.includes('usdt') || t.includes('tether')) return { icon: <CircleDollarSign className="w-5 h-5 text-cyan-200" />, bg: 'from-cyan-500/40 to-sky-400/30' };
-  if (t.includes('بیتکوین') || t.includes('bitcoin') || t.includes('btc')) return { icon: <Bitcoin className="w-5 h-5 text-orange-200" />, bg: 'from-orange-500/40 to-amber-400/30' };
-  if (t.includes('نفت') || t.includes('brent') || t.includes('oil')) return { icon: <Droplet className="w-5 h-5 text-blue-200" />, bg: 'from-blue-500/40 to-indigo-400/30' };
-  if (t.includes('بورس')) return { icon: <BarChart3 className="w-5 h-5 text-pink-200" />, bg: 'from-pink-500/40 to-rose-400/30' };
-  return { icon: <CandlestickChart className="w-5 h-5 text-yellow-200" />, bg: 'from-yellow-500/30 to-amber-400/20' };
+  // Return icon and backgrounds tuned for light/dark
+  if (t.includes('انس') || t.includes('طلا') || t.includes('mesghal') || t.includes('mesqal')) return { icon: <Gem className="w-5 h-5 text-yellow-700 dark:text-yellow-200 drop-shadow" />, lightBg: 'bg-yellow-50', darkBg: 'bg-gradient-to-br from-yellow-500/40 to-amber-400/30', ring: 'ring-yellow-200 dark:ring-yellow-400/30' };
+  if (t.includes('مثقال') || t.includes('گرم18') || t.includes('طلا18عیار') || t.includes('طلا18') || t.includes('طلا 18 عیار')) return { icon: <Gem className="w-5 h-5 text-yellow-700 dark:text-yellow-200 drop-shadow" />, lightBg: 'bg-yellow-50', darkBg: 'bg-gradient-to-br from-yellow-500/40 to-amber-400/30', ring: 'ring-yellow-200 dark:ring-yellow-400/30' };
+  if (t.includes('سکه')) return { icon: <Coins className="w-5 h-5 text-amber-700 dark:text-amber-200 drop-shadow" />, lightBg: 'bg-amber-50', darkBg: 'bg-gradient-to-br from-amber-500/40 to-yellow-400/30', ring: 'ring-amber-200 dark:ring-amber-400/30' };
+  if (t.includes('دلار') || t.includes('usd')) return { icon: <Banknote className="w-5 h-5 text-emerald-700 dark:text-emerald-200 drop-shadow" />, lightBg: 'bg-emerald-50', darkBg: 'bg-gradient-to-br from-emerald-500/40 to-teal-400/30', ring: 'ring-emerald-200 dark:ring-emerald-400/30' };
+  if (t.includes('تتر') || t.includes('usdt') || t.includes('tether')) return { icon: <CircleDollarSign className="w-5 h-5 text-cyan-700 dark:text-cyan-200 drop-shadow" />, lightBg: 'bg-cyan-50', darkBg: 'bg-gradient-to-br from-cyan-500/40 to-sky-400/30', ring: 'ring-cyan-200 dark:ring-cyan-400/30' };
+  if (t.includes('بیتکوین') || t.includes('bitcoin') || t.includes('btc')) return { icon: <Bitcoin className="w-5 h-5 text-orange-700 dark:text-orange-200 drop-shadow" />, lightBg: 'bg-orange-50', darkBg: 'bg-gradient-to-br from-orange-500/40 to-amber-400/30', ring: 'ring-orange-200 dark:ring-orange-400/30' };
+  if (t.includes('نفت') || t.includes('brent') || t.includes('oil')) return { icon: <Droplet className="w-5 h-5 text-blue-700 dark:text-blue-200 drop-shadow" />, lightBg: 'bg-sky-50', darkBg: 'bg-gradient-to-br from-blue-500/40 to-indigo-400/30', ring: 'ring-sky-200 dark:ring-sky-400/30' };
+  if (t.includes('بورس')) return { icon: <BarChart3 className="w-5 h-5 text-pink-700 dark:text-pink-200 drop-shadow" />, lightBg: 'bg-pink-50', darkBg: 'bg-gradient-to-br from-pink-500/40 to-rose-400/30', ring: 'ring-pink-200 dark:ring-pink-400/30' };
+  return { icon: <CandlestickChart className="w-5 h-5 text-yellow-700 dark:text-yellow-200 drop-shadow" />, lightBg: 'bg-yellow-50', darkBg: 'bg-gradient-to-br from-yellow-500/30 to-amber-400/20', ring: 'ring-yellow-200 dark:ring-yellow-400/30' };
 }
 
 const normalizeTitle = (title: string): string => {
@@ -118,7 +128,7 @@ const normalizeTitle = (title: string): string => {
 };
 
 const TGJUCard = ({ item }: { item: TGJUItem }) => {
-  const { icon, bg } = getIconForTitle(item.title || '');
+  const { icon, lightBg, darkBg, ring } = getIconForTitle(item.title || '');
   const unit = getUnitFromTitle(item.title || '');
   // Normalize price to Persian digits with grouping
   const formattedPrice = toFaNum(item.price);
@@ -126,7 +136,7 @@ const TGJUCard = ({ item }: { item: TGJUItem }) => {
   return (
     <div className="glass-effect rounded-2xl p-3 card-hover w-full flex-shrink-0">
       <div className="flex items-center gap-2">
-        <div className={`w-9 h-9 rounded-xl flex items-center justify-center bg-gradient-to-br ${bg} border border-white/10`}>
+        <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${lightBg} dark:${darkBg} border border-black/10 dark:border-white/10 ring-1 ${ring} dark:bg-white/10 dark:shadow-[0_0_0_1px_rgba(255,255,255,0.08)]`}>
           {icon}
         </div>
         <div className="flex-grow text-right">

@@ -94,15 +94,15 @@ export default function HafezFortune() {
   };
 
   return (
-    <Card className="glass-effect border-0 bg-gradient-to-br from-black/40 via-zinc-900/40 to-black/30 backdrop-blur-xl">
+    <Card className="glass-effect border-0 bg-gradient-to-br from-white/80 via-white/70 to-white/80 dark:from-black/40 dark:via-zinc-900/40 dark:to-black/30 backdrop-blur-xl">
       <CardHeader>
-        <div className="glass-effect rounded-2xl p-5 mb-4 bg-gradient-to-br from-black/40 via-zinc-900/40 to-black/30 border-0 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/40 to-pink-500/20 shadow-[0_0_18px_#a855f755] flex items-center justify-center">
-            <Heart className="w-5 h-5 text-purple-300" />
+        <div className="glass-effect rounded-2xl p-5 mb-4 bg-gradient-to-br from-white/70 via-white/60 to-white/70 dark:from-black/40 dark:via-zinc-900/40 dark:to-black/30 border-0 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/30 to-pink-500/15 shadow-[0_0_18px_#a855f733] flex items-center justify-center">
+            <Heart className="w-5 h-5 text-purple-700 dark:text-purple-300" />
           </div>
           <div>
             <div className="text-lg font-display font-semibold text-foreground">فال حافظ</div>
-            <div className="text-sm text-foreground/70">فال‌گیری با اشعار زیبای حافظ شیرازی</div>
+            <div className="text-sm text-muted-foreground">فال‌گیری با اشعار زیبای حافظ شیرازی</div>
           </div>
         </div>
       </CardHeader>
@@ -139,9 +139,9 @@ export default function HafezFortune() {
               className="space-y-6"
             >
               {/* Poem */}
-              <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-500/15 to-pink-500/15 border border-purple-500/30">
+              <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 dark:from-purple-500/15 dark:to-pink-500/15 border border-purple-500/30">
                 <div className="text-center space-y-4">
-                  <div className="text-2xl font-bold text-purple-200 mb-4">
+                  <div className="text-2xl font-bold text-purple-700 dark:text-purple-200 mb-4">
                     فال شماره {currentFortune.id}
                   </div>
                   
@@ -149,7 +149,7 @@ export default function HafezFortune() {
                     <div className="text-xl font-bold text-foreground leading-relaxed">
                       {currentFortune.poem}
                     </div>
-                    <div className="text-lg text-purple-300 leading-relaxed">
+                    <div className="text-lg text-purple-700 dark:text-purple-300 leading-relaxed">
                       {currentFortune.continuation}
                     </div>
                   </div>
@@ -157,9 +157,9 @@ export default function HafezFortune() {
               </div>
 
               {/* Interpretation */}
-              <div className="p-6 rounded-2xl bg-gradient-to-r from-green-500/15 to-emerald-500/15 border border-green-500/30">
+              <div className="p-6 rounded-2xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 dark:from-green-500/15 dark:to-emerald-500/15 border border-green-500/30">
                 <div className="space-y-3">
-                  <h3 className="text-lg font-bold text-green-300 flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-green-700 dark:text-green-300 flex items-center gap-2">
                     <Sparkles className="w-5 h-5" />
                     تفسیر فال
                   </h3>
@@ -195,7 +195,7 @@ export default function HafezFortune() {
         {/* Fortune History */}
         {fortuneHistory.length > 0 && (
           <div className="space-y-4">
-            <h3 className="text-lg font-bold text-purple-300 text-center">
+            <h3 className="text-lg font-bold text-purple-700 dark:text-purple-300 text-center">
               فال‌های اخیر
             </h3>
             <div className="space-y-2">
@@ -205,10 +205,10 @@ export default function HafezFortune() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="p-3 rounded-xl bg-black/20 border border-purple-500/20 cursor-pointer hover:border-purple-500/40 transition-all"
+                  className="p-3 rounded-xl bg-white/60 dark:bg-black/20 border border-purple-500/20 cursor-pointer hover:border-purple-500/40 transition-all"
                   onClick={() => setCurrentFortune(fortune)}
                 >
-                  <div className="text-sm text-purple-200">
+                  <div className="text-sm text-purple-700 dark:text-purple-200">
                     فال شماره {fortune.id}
                   </div>
                   <div className="text-xs text-foreground/70 truncate">
@@ -230,7 +230,7 @@ export default function HafezFortune() {
 
         {/* Information */}
         <div className="p-4 rounded-2xl bg-gradient-to-r from-yellow-500/10 to-amber-500/10 border border-yellow-500/20">
-          <h4 className="text-sm font-bold text-yellow-300 mb-2">درباره فال حافظ:</h4>
+          <h4 className="text-sm font-bold text-yellow-700 dark:text-yellow-300 mb-2">درباره فال حافظ:</h4>
           <ul className="text-xs text-foreground/70 space-y-1">
             <li>• حافظ شیرازی از بزرگترین شاعران فارسی است</li>
             <li>• فال حافظ سنتی دیرینه در فرهنگ ایرانی است</li>

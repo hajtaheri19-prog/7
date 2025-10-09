@@ -4,6 +4,7 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import { useParams, useSearchParams } from 'next/navigation';
 import Header from '@/components/layout/header';
+import { toolCategories } from '@/lib/tool-categories';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { Home, ArrowLeft, Loader2 } from 'lucide-react';
@@ -73,6 +74,7 @@ const components: Record<string, React.ComponentType | null> = {
   'text-analyzer': dynamic(() => import('@/components/features/text-analyzer'), { ssr: false, loading: LoadingFallback }),
   'space-remover': dynamic(() => import('@/components/features/space-remover'), { ssr: false, loading: LoadingFallback }),
   'distance-calculator': dynamic(() => import('@/components/features/distance-calculator'), { ssr: false, loading: LoadingFallback }),
+  'market-rates': dynamic(() => import('@/components/features/market-rates'), { ssr: false, loading: LoadingFallback }),
   'signature-generator': dynamic(() => import('@/components/features/signature-generator'), { ssr: false, loading: LoadingFallback }),
   'robots-txt-generator': dynamic(() => import('@/components/features/robots-txt-generator'), { ssr: false, loading: LoadingFallback }),
   'ip-detector': dynamic(() => import('@/components/features/ip-detector'), { ssr: false, loading: LoadingFallback }),
@@ -97,6 +99,13 @@ export default function ToolPage() {
   const search = useSearchParams();
   const section = search?.get('section');
   const Comp = components[id] || null;
+  const faTitle = (() => {
+    for (const cat of toolCategories) {
+      const found = cat.tools.find(t => t.id === id);
+      if (found) return found.title;
+    }
+    return id;
+  })();
   return (
     <div className="min-h-screen">
       <Header />
@@ -109,7 +118,7 @@ export default function ToolPage() {
             <span>/</span>
             <span className="text-foreground">{section ? 'جعبه ابزار' : 'ابزار'}</span>
             <span>/</span>
-            <span className="text-foreground">{id}</span>
+            <span className="text-foreground">{faTitle}</span>
             <span className="ml-auto" />
             <Link href={section ? `/#section-${section}` : '/'} className="inline-flex items-center gap-1 hover:underline">
               بازگشت

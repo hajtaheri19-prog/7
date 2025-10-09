@@ -23,14 +23,14 @@ import { Separator } from '../ui/separator';
 
 const PriceChangeIndicator = ({ change }: { change: number }) => {
   if (change === 0) {
-    return <div className="text-muted-foreground text-sm font-mono">۰.۰۰٪</div>;
+    return <div className="text-muted-foreground text-sm font-mono digits-fancy">۰.۰۰٪</div>;
   }
   const isPositive = change > 0;
   const color = isPositive ? 'text-green-500' : 'text-red-500';
   const Icon = isPositive ? ArrowUp : ArrowDown;
 
   return (
-    <div className={cn("flex items-center justify-center gap-1 font-mono text-sm", color)}>
+    <div className={cn("flex items-center justify-center gap-1 font-mono text-sm digits-fancy", color)}>
       <Icon className="w-3 h-3" />
       <span>{change.toFixed(2)}%</span>
     </div>

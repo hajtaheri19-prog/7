@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readGhazalById, readRandomGhazal as readRandomFromLib } from '@/lib/hafez-reader';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 type HafezFortune = {
   id: number;
   poem: string;
@@ -31,10 +34,11 @@ export async function GET(req: NextRequest) {
       fortune = await readRandomGhazal();
       attempts++;
     }
-    if (!fortune) return NextResponse.json({ error: 'not_found' }, { status: 404 });
+    if (!fortune) return NextResponse.json({ error: 'not_found', message: 'No fortune data found after retries' }, { status: 404 });
     return NextResponse.json(fortune, { status: 200, headers: { 'Cache-Control': 'no-store' } });
   } catch (e) {
-    return NextResponse.json({ error: 'server_error' }, { status: 500 });
+    console.error('[Hafez API Error]', e);
+    return NextResponse.json({ error: 'server_error', message: e instanceof Error ? e.message : 'Unknown error' }, { status: 500 });
   }
 }
 

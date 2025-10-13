@@ -10,8 +10,8 @@ import SplashScreen from '@/components/layout/splash-screen';
 const APP_NAME = "تبدیلا";
 const APP_DEFAULT_TITLE = "تبدیلا | دستیار هوشمند ابزارهای آنلاین";
 const APP_TITLE_TEMPLATE = "%s | تبدیلا";
-const APP_DESCRIPTION = "تبدیلا، دستیار هوشمند شما برای انواع محاسبات و تبدیلات روزمره است. مجموعه‌ای از ابزارهای آنلاین، رایگان و هوشمند شامل تبدیل تاریخ، مبدل ارز، محاسبه درصد، BMI و ده‌ها ابزار کاربردی دیگر.";
-const APP_URL = "https://tabdila.com";
+const APP_DESCRIPTION = "تبدیلا، دستیار هوشمند شما برای انواع محاسبات و تبدیلات روزمره است. مجموعه‌ای از ابزارهای آنلاین، رایگان و هوشمند شامل تبدیل تاریخ، مبدل ارز، محاسبه درصد، BMI، تبدیل PDF، تولید QR Code، ابزارهای متن و ده‌ها ابزار کاربردی دیگر.";
+const APP_URL = "https://tabdila.ir";
 const APP_THEME_COLOR = "#6A3EAB";
 const APP_ICON = "https://uploadkon.ir/uploads/cf7220_252fb04e3a-9e9c-44da-8d7e-7a0345be973aa4-copy.png";
 
@@ -36,7 +36,9 @@ export const metadata: Metadata = {
       "تبدیلا", "دستیار هوشمند", "ابزار آنلاین", "محاسبات آنلاین", "تبدیل واحد",
       "تبدیل تاریخ", "مبدل ارز", "کرونومتر", "محاسبه درصد", "محاسبه سن", 
       "محاسبه BMI", "کد ملی", "شماره شبا", "قیمت طلا", "قیمت دلار", "ماشین حساب", 
-      "خلاصه ساز متن", "تولید رمز", "QR Code"
+      "خلاصه ساز متن", "تولید رمز", "QR Code", "تبدیل PDF", "PDF به عکس", "عکس به PDF",
+      "OCR", "تشخیص متن", "ابزارهای متن", "تبدیل فایل", "ابزارهای کاربردی",
+      "سخن بزرگان", "نقل قول", "حکمت", "ابزارهای رایگان", "ابزارهای فارسی"
   ],
   authors: [{ name: "حسین طاهری", url: "https://www.hosseintaheri.org/"}],
   creator: "حسین طاهری",
@@ -100,6 +102,41 @@ export default function RootLayout({
       <head>
          <link rel="icon" href={APP_ICON} type="image/png" />
          <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+         <script
+           type="application/ld+json"
+           dangerouslySetInnerHTML={{
+             __html: JSON.stringify({
+               "@context": "https://schema.org",
+               "@type": "WebApplication",
+               "name": "تبدیلا",
+               "description": "دستیار هوشمند شما برای انواع محاسبات و تبدیلات روزمره",
+               "url": "https://tabdila.ir",
+               "applicationCategory": "UtilitiesApplication",
+               "operatingSystem": "Web Browser",
+               "offers": {
+                 "@type": "Offer",
+                 "price": "0",
+                 "priceCurrency": "IRR"
+               },
+               "author": {
+                 "@type": "Person",
+                 "name": "حسین طاهری",
+                 "url": "https://www.hosseintaheri.org/"
+               },
+               "publisher": {
+                 "@type": "Organization",
+                 "name": "تبدیلا",
+                 "url": "https://tabdila.ir"
+               },
+               "inLanguage": "fa-IR",
+               "isAccessibleForFree": true,
+               "browserRequirements": "Requires JavaScript. Requires HTML5.",
+               "softwareVersion": "1.0",
+               "datePublished": "2024-01-01",
+               "dateModified": "2024-01-15"
+             })
+           }}
+         />
       </head>
       <body className="font-body">
         <ThemeProvider

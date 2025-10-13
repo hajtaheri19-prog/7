@@ -127,16 +127,16 @@ export default function PWAInstallPrompt() {
 
   return (
     <div className="fixed bottom-6 right-6 left-6 md:left-auto md:w-[420px] z-50">
-      <div className="glass-effect rounded-2xl border shadow-xl p-4 bg-white/80 dark:bg-black/50">
+      <div className="glass-effect rounded-2xl border border-primary/20 shadow-xl p-4 bg-white/90 dark:bg-black/80 backdrop-blur-xl">
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center text-primary">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-primary shadow-[0_4px_16px_rgba(106,62,171,0.15)]">
             <Download className="w-5 h-5" />
           </div>
           <div className="flex-1">
             <div className="text-sm font-bold text-foreground">نصب تبدیلا</div>
             <div className="text-sm text-muted-foreground mt-1">برای دسترسی سریع‌تر، برنامه را نصب کنید.</div>
             <div className="mt-3 flex items-center gap-2">
-              <Button onClick={handleInstallClick} className="h-10 px-4">
+              <Button onClick={handleInstallClick} className="h-10 px-4 bg-primary hover:bg-primary/90">
                 نصب
               </Button>
               <Button variant="secondary" onClick={handleLater} className="h-10 px-4">
@@ -153,14 +153,14 @@ export default function PWAInstallPrompt() {
               )}
             </div>
             {!hasPrompt && (
-              <div className="text-xs text-muted-foreground mt-2 leading-6">
-                <div>اگر پنجره نصب باز نشد:</div>
+              <div className="text-xs text-muted-foreground mt-2 leading-6 p-2 bg-muted/30 rounded-lg">
+                <div className="font-medium mb-1">نصب از مرورگر:</div>
                 <div className="md:hidden">روی منوی مرورگر بزنید و «افزودن به صفحهٔ اصلی» را انتخاب کنید.</div>
                 <div className="hidden md:block">در مرورگر دسکتاپ، از منوی ⋮ یا ⋯ گزینه «Install App / نصب اپ» را بزنید.</div>
               </div>
             )}
           </div>
-          <button onClick={handleLater} className="text-muted-foreground hover:text-foreground">
+          <button onClick={handleLater} className="text-muted-foreground hover:text-foreground transition-colors">
             <X className="w-4 h-4" />
           </button>
         </div>

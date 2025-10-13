@@ -7,7 +7,7 @@ import ScrollToTop from '@/components/layout/scroll-to-top';
 import type { LivePrice, PriceData } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Sword, Brain, ArrowLeft, BrainCircuit, BookText, FlaskConical, Scale, Landmark, CalendarDays, Repeat, SpellCheck, Binary, CalendarClock, Gift, Clock, Hourglass, Wallet, Bitcoin, Banknote, PiggyBank, TrendingUp, Percent, HeartPulse, Dumbbell, User, ShieldCheck, Fingerprint, RectangleEllipsis, Dices, KeyRound, QrCode, Scan, LocateFixed, Image, Monitor, FileText, Map, Info, HeartHandshake, Globe, Wrench, ArrowUp, ArrowDown, RefreshCw, Timer, CandlestickChart, ExternalLink, Construction, Calculator, Gamepad2, Puzzle, Bot, Mailbox, ReceiptText, CalendarCheck, PenLine, Hash, Link as LinkIcon, Users, Ghost, CircleDot, Castle, Rocket, Target, Ship, ArrowDownRight, Square, Search, Shield, MessageSquareHeart, Bomb, Crown, Palette, Loader2, FileSignature, Gem, FileCog, Eraser, Sigma, Smile, MessageSquare } from 'lucide-react';
+import { Sword, Brain, ArrowLeft, BrainCircuit, BookText, FlaskConical, Scale, Landmark, CalendarDays, Repeat, SpellCheck, Binary, CalendarClock, Gift, Clock, Hourglass, Wallet, Bitcoin, Banknote, PiggyBank, TrendingUp, Percent, HeartPulse, Dumbbell, User, ShieldCheck, Fingerprint, RectangleEllipsis, Dices, KeyRound, QrCode, Scan, LocateFixed, Image, Monitor, FileText, Map, Info, HeartHandshake, Globe, Wrench, ArrowUp, ArrowDown, RefreshCw, Timer, CandlestickChart, ExternalLink, Construction, Calculator, Gamepad2, Puzzle, Bot, Mailbox, ReceiptText, CalendarCheck, PenLine, Hash, Link as LinkIcon, Users, Ghost, CircleDot, Castle, Rocket, Target, Ship, ArrowDownRight, Square, Search, Shield, MessageSquareHeart, Bomb, Crown, Palette, Loader2, FileSignature, Gem, FileCog, Eraser, Sigma, Smile, MessageSquare, Bell } from 'lucide-react';
 import ImageNext from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -94,6 +94,7 @@ const UTMBuilder = dynamic(() => import('@/components/features/utm-builder'), { 
 const WhatsAppLink = dynamic(() => import('@/components/features/whatsapp-link'), { loading: () => <LoadingComponent /> });
 const LoremIpsum = dynamic(() => import('@/components/features/lorem-ipsum'), { loading: () => <LoadingComponent /> });
 const IranTime = dynamic(() => import('@/components/features/iran-time'), { loading: () => <LoadingComponent /> });
+const SmartAlertManager = dynamic(() => import('@/components/features/smart-alert-manager'), { loading: () => <LoadingComponent /> });
 const OnlineAlarm = dynamic(() => import('@/components/features/online-alarm'), { loading: () => <LoadingComponent /> });
 const BeckDepressionTest = dynamic(() => import('@/components/features/beck-depression-test'), { loading: () => <LoadingComponent /> });
 const HappinessTest = dynamic(() => import('@/components/features/happiness-test'), { loading: () => <LoadingComponent /> });
@@ -137,6 +138,7 @@ const toolCategories: ToolCategory[] = [
        { id: 'ocr-extractor', title: 'استخراج متن از تصویر و PDF', icon: <Scan className="h-8 w-8 text-indigo-400" />, component: OcrExtractor },
        { id: 'contract-generator', title: 'مولد قرارداد هوشمند', icon: <FileSignature className="h-8 w-8 text-emerald-400" />, isWip: true },
        { id: 'pdf-word-converter', title: 'تبدیل PDF به Word (و بالعکس)', icon: <RectangleEllipsis className="h-8 w-8 text-blue-400" />, component: PdfWordConverter },
+       { id: 'smart-alert-manager', title: 'هشدار هوشمند شخصی', icon: <Bell className="h-8 w-8 text-purple-400" />, component: SmartAlertManager },
        { id: 'pdf-image-converter', title: 'تبدیل PDF به عکس (و برعکس)', icon: <RectangleEllipsis className="h-8 w-8 text-green-400" />, component: PdfImageConverter },
     ]
   },
@@ -301,7 +303,7 @@ export default function Home() {
       <main className="p-4 sm:p-6 lg:p-8">
         <div className="mx-auto max-w-screen-2xl">
 
-          <div className="mt-2">
+          <div className="mt-2 mb-8">
             <QuotesRotator effect="flip3d" />
           </div>
 

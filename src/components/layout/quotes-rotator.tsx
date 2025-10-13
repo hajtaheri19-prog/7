@@ -84,42 +84,48 @@ export default function QuotesRotator({ effect = 'flip3d', mode = 'random' }: { 
   if (!mounted || !current) return null;
 
   return (
-    <Card className="relative overflow-hidden rounded-2xl md:rounded-3xl border border-yellow-500/30 bg-gradient-to-br from-white/90 via-white/80 to-white/90 dark:from-zinc-900/80 dark:via-black/70 dark:to-zinc-900/80 shadow-[0_10px_40px_rgba(0,0,0,0.15)] backdrop-blur-xl max-w-xl md:max-w-3xl mx-auto">
+    <Card className="relative overflow-hidden rounded-2xl md:rounded-3xl border border-primary/20 bg-gradient-to-br from-background/60 via-background/40 to-background/60 dark:from-zinc-900/40 dark:via-black/30 dark:to-zinc-900/40 shadow-[0_8px_32px_rgba(0,0,0,0.12)] backdrop-blur-xl w-full max-w-full">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -inset-24 bg-[radial-gradient(50%_50%_at_20%_20%,rgba(234,179,8,0.15),transparent_60%),radial-gradient(40%_40%_at_80%_80%,rgba(250,204,21,0.12),transparent_60%)]" />
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-yellow-500/20 to-transparent" />
+        <div className="absolute -inset-16 bg-[radial-gradient(50%_50%_at_30%_30%,rgba(106,62,171,0.08),transparent_70%),radial-gradient(40%_40%_at_70%_70%,rgba(139,92,246,0.06),transparent_70%)]" />
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
       </div>
-      <div className="relative p-4 md:p-5 flex items-start gap-3 md:gap-5">
-        <div className="w-9 h-9 md:w-11 md:h-11 rounded-2xl border border-yellow-400/50 bg-gradient-to-br from-yellow-500/40 to-yellow-300/20 shadow-[0_8px_25px_rgba(234,179,8,0.25)] flex items-center justify-center shrink-0 backdrop-blur-sm">
-          <Quote className="w-5 h-5 md:w-6 md:h-6 text-yellow-700 dark:text-yellow-100" />
-        </div>
-        <div className="flex-1">
-          <div className="mb-2 flex items-center gap-2">
-            <span className="text-[10px] md:text-xs font-bold tracking-wider text-yellow-700/90 dark:text-yellow-200/90">✨ سخن بزرگان ✨</span>
-            <span className="inline-block h-3 w-px bg-yellow-500/40" />
-            <span className="text-[10px] md:text-xs text-muted-foreground">روزانه الهام‌بخش</span>
+      <div className="relative p-4 sm:p-6 md:p-8 flex flex-col gap-4">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl border border-primary/30 bg-gradient-to-br from-primary/15 to-accent/10 shadow-[0_4px_16px_rgba(106,62,171,0.15)] flex items-center justify-center backdrop-blur-sm">
+            <Quote className="w-4 h-4 md:w-5 md:h-5 text-primary/80" />
           </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs md:text-sm font-medium tracking-wide text-primary/90">✨ سخن بزرگان ✨</span>
+            <span className="inline-block h-3 w-px bg-primary/30" />
+            <span className="text-xs text-muted-foreground/80">روزانه الهام‌بخش</span>
+          </div>
+        </div>
+        
+        <div className="space-y-4">
           <div className={
             effect === 'flip3d'
-              ? "text-[13px] md:text-[18px] leading-6 md:leading-8 text-foreground animate-in fade-in font-display font-semibold [text-shadow:0_0_16px_rgba(234,179,8,0.12)]"
+              ? "text-base md:text-lg leading-relaxed md:leading-loose text-foreground/95 animate-in fade-in font-medium [text-shadow:0_0_8px_rgba(106,62,171,0.08)]"
               : effect === 'parallax'
-              ? "text-[13px] md:text-[18px] leading-6 md:leading-8 text-foreground animate-in fade-in [transform:translateY(3px)] font-display font-semibold"
-              : "text-[13px] md:text-[18px] leading-6 md:leading-8 text-foreground animate-in fade-in slide-in-from-bottom-1 font-display font-semibold"
+              ? "text-base md:text-lg leading-relaxed md:leading-loose text-foreground/95 animate-in fade-in font-medium [transform:translateY(2px)]"
+              : "text-base md:text-lg leading-relaxed md:leading-loose text-foreground/95 animate-in fade-in font-medium slide-in-from-bottom-1"
           }>
-            <span className="text-yellow-600/90 dark:text-yellow-400/80 align-middle">“</span>
-            {getDisplayText(current.text || '')}
-            <span className="text-yellow-600/90 dark:text-yellow-400/80 align-middle">”</span>
+            <span className="text-primary/70 align-middle text-lg md:text-xl">"</span>
+            <span className="px-1">{getDisplayText(current.text || '')}</span>
+            <span className="text-primary/70 align-middle text-lg md:text-xl">"</span>
           </div>
-          <div className="mt-2 flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-500/25 to-yellow-300/15 border border-yellow-400/40 text-[10px] text-yellow-800 dark:text-yellow-100 flex items-center justify-center shadow-[0_2px_8px_rgba(234,179,8,0.25)]">
-              {(current.author || 'ح').slice(0, 1)}
+          
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary/20 to-accent/15 border border-primary/25 text-xs text-primary/80 flex items-center justify-center shadow-[0_2px_8px_rgba(106,62,171,0.15)]">
+                {(current.author || 'ح').slice(0, 1)}
+              </div>
+              <div className="text-sm text-muted-foreground font-medium">— {current.author || 'حکیم'}</div>
             </div>
-            <div className="text-[10px] md:text-xs text-yellow-700 dark:text-yellow-200 font-bold">— {current.author || 'حکیم'}</div>
             {shouldShowExpandButton && (
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="ml-auto inline-flex items-center px-2.5 py-1 text-[10px] rounded-lg border border-yellow-400/40 bg-yellow-500/10 text-yellow-700 dark:text-yellow-200 hover:bg-yellow-500/20 transition"
+                className="inline-flex items-center px-3 py-1.5 text-xs rounded-lg border border-primary/25 bg-primary/5 text-primary/80 hover:bg-primary/10 transition-colors"
               >
                 {isExpanded ? 'کمتر' : 'مشاهده کامل'}
               </button>
@@ -127,7 +133,7 @@ export default function QuotesRotator({ effect = 'flip3d', mode = 'random' }: { 
           </div>
         </div>
       </div>
-      <div className="absolute inset-x-8 bottom-2 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent" />
+      <div className="absolute inset-x-6 bottom-3 h-px bg-gradient-to-r from-transparent via-primary/15 to-transparent" />
     </Card>
   );
 }

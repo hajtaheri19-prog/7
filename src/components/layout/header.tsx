@@ -77,6 +77,13 @@ export default function Header() {
             <div className="sm:flex">
               <LiveClock />
             </div>
+            <Link
+              href="/about"
+              className="hidden sm:inline-flex items-center gap-1 h-9 px-3 rounded-lg border bg-white/70 dark:bg-black/30 text-foreground hover:bg-white/90 transition"
+              title="درباره تبدیلا"
+            >
+              درباره ما
+            </Link>
             <button
               onClick={() => {
                 try { window.dispatchEvent(new Event('pwa:showInstall')); } catch {}
